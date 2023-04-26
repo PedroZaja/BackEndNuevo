@@ -1,0 +1,82 @@
+[
+    {
+        "titulo": "procesador",
+        "descripcion": "i7 12700K",
+        "precio": 3500,
+        "img": "sin img",
+        "stock": 20,
+        "code": "l2e6opqtfp9"
+    },
+    {
+        "titulo": "mother",
+        "descripcion": "Z690",
+        "precio": 4000,
+        "img": "sin img",
+        "stock": 25,
+        "code": "id7cjc2ctdn"
+    },
+    {
+        "titulo": "gabinete",
+        "descripcion": "phanteks",
+        "precio": 2000,
+        "img": "sin img",
+        "stock": 15,
+        "code": "bn7fnp45be9f"
+    },
+    {
+        "titulo": "ssd",
+        "descripcion": "2tb",
+        "precio": 2500,
+        "img": "sin img",
+        "stock": 45,
+        "code": "dh3dftkbn0p"
+    },
+    {
+        "titulo": "ram",
+        "descripcion": "16gb",
+        "precio": 3000,
+        "img": "sin img",
+        "stock": 40,
+        "code": "4iaiipdca44"
+    },
+    {
+        "titulo": "fuente",
+        "descripcion": "1000W",
+        "precio": 5000,
+        "img": "sin img",
+        "stock": 35,
+        "code": "71gq4og14pd9"
+    },
+    {
+        "titulo": "ssd m.2",
+        "descripcion": "512gb",
+        "precio": 5000,
+        "img": "sin img",
+        "stock": 30,
+        "code": "1jkjhhi3oi4"
+    },
+    {
+        "titulo": "cooler",
+        "descripcion": "120mm",
+        "precio": 5000,
+        "img": "sin img",
+        "stock": 35,
+        "code": "4iaiipdca94"
+    },
+    {
+        "titulo": "mouse",
+        "descripcion": "gamer",
+        "precio": 1000,
+        "img": "sin img",
+        "stock": 50,
+        "code": "4isdipdca94"
+    },
+    {
+        "titulo": "teclado",
+        "descripcion": "mecanico",
+        "precio": 2000,
+        "img": "sin img",
+        "stock": 20,
+        "code": "958asdasd"
+    }
+]

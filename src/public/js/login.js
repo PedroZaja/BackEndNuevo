@@ -21,7 +21,7 @@ form.addEventListener('submit', e => {
 
         } else if (result.status === 401) {
             console.log(result);
-            alert("Invalid login, check your credentials!");
+            alert("Inicio de sesion invalido! Revisa tus datos!");
         }
     })
 });

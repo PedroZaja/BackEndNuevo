@@ -18,10 +18,10 @@ form.addEventListener('submit', e => {
     }).then(result => {
         if (result.status === 200) {
             result.json();
-            alert("Password restored successfully")
+            alert("La contraseña se cambio correctamente!")
             window.location.replace('/users/login');
         } else {
-            alert(`Error restoring password`)
+            alert(`Error cambiando la contraseña`)
         }
     }).then(
         json => console.log(json));

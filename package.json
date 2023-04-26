@@ -33,7 +33,6 @@
     "socket.io": "^4.6.1",
     "sweetalert2": "^11.7.2"
   },
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/PedroZaja/Proyecto-Back-End.git"
