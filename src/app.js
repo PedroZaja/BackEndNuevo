@@ -67,6 +67,10 @@ app.use("/users", usersViewsRouter);
 app.use("/github", githubLoginRouter);
 app.use("/", viewsRouter);
 
+app.get("/mail", async (req, res)=>{
+
+});
+
 
 const httpServer = app.listen(config.port, () => {
     console.log(`Express Server listening  on the port: ${config.port}`);
