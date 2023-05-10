@@ -2,9 +2,11 @@ import passport from 'passport'
 import jwtStrategy from 'passport-jwt'
 import passportLocal from 'passport-local'
 import GitHubStrategy from 'passport-github2';
-import userModel from '../dao/models/user.model.js'
 import { createHash, isValidPassword } from '../util.js'
 import config from './config.js';
+import UserManager from '../dao/db/user.dao.js';
+
+const userManager = new UserManager();
 
 const LocalStrategy = passportLocal.Strategy;
 
@@ -21,7 +23,8 @@ const initializePassport = () => {
 
                 try {
     
-                    const userExists = await userModel.findOne({ email: username });
+                    const userExists = await userManager.findOne(username);
+
                     if (userExists) {
                         console.log("User already exist.");
                         return done(null, false,{messages:'User already exist.'});
@@ -39,12 +42,12 @@ const initializePassport = () => {
                         user.role = 'admin';
                     }
     
-                    const result = await userModel.create(user);
+                    const result = await userManager.createUser(user);
 
                     return done(null, result,{messages:`User created successfully, ID: ${result.id}`});
     
                 } catch (error) {
-                    return done("Error getting user: " + error + " "+err.message)
+                    return done("Error getting user: " + error)
                 }
             }
         ))
@@ -54,7 +57,7 @@ const initializePassport = () => {
 
                 try {
 
-                    const user = await userModel.findOne({ email: username });
+                    const user = await userManager.findOne(username);
                     console.log("User finded for login:");
                     console.log(user);
     
@@ -108,7 +111,7 @@ const initializePassport = () => {
             console.log("Profile obtained from user: ");
             console.log(profile);
             try {
-                const user = await userModel.findOne({
+                const user = await userManager.findOne({
                     email: profile._json.email
                 });
 
@@ -126,7 +129,7 @@ const initializePassport = () => {
                         loggedBy: "GitHub"
                     };
 
-                    const result = await userModel.create(newUser);
+                    const result = await userManager.create(newUser);
                     return done(null, result);
 
                 } else {
@@ -145,7 +148,7 @@ const initializePassport = () => {
 
     passport.deserializeUser(async (id, done) => {
         try {
-            let user = await userModel.findById(id);
+            let user = await userManager.findById(id);
             done(null, user);
 
         } catch (error) {
@@ -173,4 +176,3 @@ const cookieExtractor = req => {
 };
 
 export default initializePassport;
-

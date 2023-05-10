@@ -1,4 +1,4 @@
-import {messagesModel} from "../../db/models/messages.model.js"
+import {messagesModel} from "../../dao/db/models/messages.model.js";
 
 export default class MessageService {
 

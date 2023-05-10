@@ -32,6 +32,5 @@ userSchema.pre(/^find/, function (next) {
     next();
 });
 
-const userModel = mongoose.model(collection, userSchema);
+export const userModel = mongoose.model(collection, userSchema);
 
-export default userModel;

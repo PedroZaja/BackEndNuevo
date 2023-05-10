@@ -1,5 +1,5 @@
-import { cartsModel } from "../../db/models/carts.model.js"
-import ProductManager from "./products.service.js";
+import { cartsModel } from "../../models/carts.model.js";
+import ProductManager from "./products.dao.js";
 
 
 export default class CartManager {
