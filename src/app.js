@@ -12,17 +12,17 @@ import MongoStore from 'connect-mongo';
 // Passport
 import passport from 'passport';
 import initializePassport from './config/passport.config.js';
+
 // Routers
 import productsRouter from "./routes/products.router.js";
 import cartRouter from "./routes/cart.router.js";
 import viewsRouter from './routes/views.router.js';
 import usersViewsRouter from './routes/user.views.router.js';
-import sessionsRouter from './routes/sessions.router.js';
+import sessionsRouter from './routes/auth.router.js';
 import githubLoginRouter from './routes/github-login.views.router.js'
 
 
 //Declare Express server.
-const SERVER_PORT = 8080;
 const app = express();
 
 //Prepare server settings to receive JSON objects
@@ -59,6 +59,7 @@ initializePassport();
 app.use(passport.initialize());
 app.use(passport.session());
 
+
 // Routes
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartRouter);
@@ -66,11 +67,6 @@ app.use("/api/sessions", sessionsRouter);
 app.use("/users", usersViewsRouter);
 app.use("/github", githubLoginRouter);
 app.use("/", viewsRouter);
-
-app.get("/mail", async (req, res)=>{
-
-});
-
 
 const httpServer = app.listen(config.port, () => {
     console.log(`Express Server listening  on the port: ${config.port}`);
@@ -89,3 +85,4 @@ const connectMongoDB = async () => {
 
 }
 connectMongoDB();
+

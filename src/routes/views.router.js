@@ -17,21 +17,46 @@ router.get('/', (req, res) => {
 });
 
 router.get('/chat', (req, res) => {
-    res.render("chat", { });
+    res.render("chat", {});
 })
 
-router.get('/products',passportCall('jwt'), async (req, res) => {
-    const perPage = 10;
-    const page = req.query.page || 1;
+router.get('/products', passportCall('jwt'), async (req, res) => {
+
+    const limit = req.query.limit ? parseInt(req.query.limit) : 10;
+    const page = req.query.page ? parseInt(req.query.page) : 1;
+    const category = req.query.category ? req.query.category.toLowerCase() : null;
+    const status = req.query.status === 'true' ? true : req.query.status === 'false' ? false : undefined;
+    const sort = req.query.sort ? (req.query.sort === "asc" ? 1 : req.query.sort === "desc" ? -1 : null) : null;
+
+    const filters = {};
+    const options = {};
+
+    if (category || status !== undefined) {
+        if (category) {
+            filters.category = category;
+        }
+        if (status !== undefined) {
+            filters.status = status;
+        }
+    }
+
+    options.lean = true;
+    options.limit = limit;
+    options.page = page;
+    if (sort !== null) {
+        options.sort = { price: sort };
+    }
 
     console.log("User loggued: ");
     console.log(req.user);
+
     try {
-        const products = await productsModel.paginate({}, { page, limit: perPage, lean: true });
+
+        const products = await productsModel.paginate(filters, options);
         console.log(products);
 
         let user, admin = null;
-        
+
         if (req.user) {
             user = req.user;
         }
@@ -40,15 +65,9 @@ router.get('/products',passportCall('jwt'), async (req, res) => {
         }
 
         res.render("products", {
-            products: products.docs, 
-            currentPage: page, 
-            totalPages: products.totalPages,
-            hasPrevPage: products.hasPrevPage,
-            hasNextPage: products.hasNextPage,
-            prevPage: products.prevPage,
-            nextPage: products.nextPage,
-            user: user,
-            admin: admin
+            products,
+            user,
+            admin
         });
 
     } catch (error) {
@@ -60,12 +79,12 @@ router.get('/products',passportCall('jwt'), async (req, res) => {
 router.get('/carts/:cid', async (req, res) => {
     const perPage = 10;
     const page = req.query.page || 1;
-    
+
     try {
         const carts = await cartsModel.paginate({}, { page, limit: perPage, lean: true });
         res.render("carts", {
-            carts: carts.docs, 
-            currentPage: carts.page, 
+            carts: carts.docs,
+            currentPage: carts.page,
             totalPages: carts.totalPages
         });
 
@@ -87,7 +106,7 @@ router.get('/realtimeproducts', async (req, res) => {
 router.post('/realtimeproducts', async (req, res) => {
     try {
         let newProduct = req.body;
-        let productCreated = await productManager.addProduct(newProduct);
+        let productCreated = await productManager.createProduct(newProduct);
 
         if (productCreated.success) {
             io.emit("update-products", await productManager.getProducts());

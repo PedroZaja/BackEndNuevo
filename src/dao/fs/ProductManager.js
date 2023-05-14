@@ -10,7 +10,7 @@ class ProductManager {
     }
 
     //Adds a new product to the products array and saves it to the JSON file.
-    async addProduct(newProduct) {
+    async createProduct(newProduct) {
         try {
 
             if (!newProduct.title || !newProduct.description || !newProduct.price || !newProduct.thumbnail || !newProduct.code || !newProduct.stock || !newProduct.status || !newProduct.category) {

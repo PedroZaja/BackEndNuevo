@@ -21,9 +21,7 @@ router.get('/restore', publicRouteMiddleware, (req, res)=>{
 
 router.get('/', passportCall('jwt'), (req, res)=>{
 
-    res.render('products', {
-        user: req.user,
-    });
+    res.redirect("/products");
 })
 
 router.get("/error", (req, res)=>{

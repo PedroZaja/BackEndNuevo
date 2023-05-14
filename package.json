@@ -1,5 +1,5 @@
 {
-  "name": "proyectofinal",
+  "name": "pedrozaja-proyectocoderhouse",
   "version": "1.0.0",
   "description": "proyecto final",
   "main": "app.js",
@@ -36,10 +36,7 @@
     "sweetalert2": "^11.7.2",
     "twilio": "^4.10.0"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/PedroZaja/Proyecto-Back-End.git"
-  },
+  "repository": "git+https://github.com/PedroZaja/Proyecto-Back-End.git",
   "bugs": {
     "url": "https://github.com/PedroZaja/Proyecto-Back-End/issues"
   },

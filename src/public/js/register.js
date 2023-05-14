@@ -13,23 +13,21 @@ form.addEventListener('submit', e => {
             'Content-Type': 'application/json'
         }
     })
-    .then(response => {
-        if (response.ok) {
-            return response.json();
+    .then(result => {
+        console.log(result)
+        if (result.status === 201) {
+            window.location.replace('/users/login');
+
+        } else if (result.status === 401) {
+            console.log(result);
+            alert("Invalid login, check your credentials!");
         } else {
-            throw new Error('Server error');
-        }
-    })
-    .then(data => {
-        if (data.status === "success") {
-            alert("User created successfully")
-            window.location.href = data.redirectUrl;
-        } else {
-            console.error('Error:', data.message);
-            alert(`Error: ${data.message}`);
+            console.log(result);
+            alert(`Error: creating the user`);
         }
     })
     .catch(error => {
         console.error('Error:', error);
     });
+
 });
