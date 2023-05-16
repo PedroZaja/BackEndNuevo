@@ -16,14 +16,17 @@ const userSchema = new mongoose.Schema({
         default: 'user',
         enum: ['user', 'admin'],
     },
-    cart: {
-        type: [{
-                cartId: {
-                    type: mongoose.Schema.Types.ObjectId,
-                    ref: "carts"
-                }
-            }],
-        default:[]
+    cart: {   
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "carts"
+    },
+    orders: {
+        type: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "tickets"       
+            }   
+        ]
     }
 })
 
@@ -33,4 +36,3 @@ userSchema.pre(/^find/, function (next) {
 });
 
 export const userModel = mongoose.model(collection, userSchema);
-

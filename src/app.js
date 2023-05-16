@@ -19,8 +19,9 @@ import cartRouter from "./routes/cart.router.js";
 import viewsRouter from './routes/views.router.js';
 import usersViewsRouter from './routes/user.views.router.js';
 import sessionsRouter from './routes/auth.router.js';
-import githubLoginRouter from './routes/github-login.views.router.js'
-
+import githubLoginRouter from './routes/github-login.views.router.js';
+import ticketsRouter from './routes/tickets.router.js'
+import emailRouter from './routes/email.router.js';
 
 //Declare Express server.
 const app = express();
@@ -64,12 +65,14 @@ app.use(passport.session());
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartRouter);
 app.use("/api/sessions", sessionsRouter);
+app.use('/api/tickets', ticketsRouter);
 app.use("/users", usersViewsRouter);
 app.use("/github", githubLoginRouter);
+app.use("/api/mail", emailRouter);
 app.use("/", viewsRouter);
 
 const httpServer = app.listen(config.port, () => {
-    console.log(`Express Server listening  on the port: ${config.port}`);
+    console.log(`Servidor activo en el puerto: ${config.port}`);
 })
 // Initialize websocket Server
 setupWebSocket(httpServer);
@@ -78,11 +81,10 @@ setupWebSocket(httpServer);
 const connectMongoDB = async () => {
     try {
         await mongoose.connect(config.mongoUrl);
-        console.log("Connection to DB Succed");
+        console.log("Conexion a la base de datos exitosa!");
     } catch (error) {
-        console.log("Error on connection to DB"+error);
+        console.log("Error conectando a la base de datos: "+error);
     }
 
 }
 connectMongoDB();
-

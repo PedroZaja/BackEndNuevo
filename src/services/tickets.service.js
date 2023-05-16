@@ -1,12 +1,13 @@
-import TicketManager from "../dao/db/tickets.dao";
+import TicketManager from "../dao/db/tickets.dao.js";
 
-class TicketService{
+const ticketManager = new TicketManager();
+
+export default class TicketService {
+    
     createTicket(data){
         const { total, purchaser } = data;
 
-        return TicketManager.createTicket({amount: total, purchaser: purchaser});
+        return ticketManager.createTicket({amount: total, purchaser: purchaser});
     }
 
 };
-
-export default new TicketService();

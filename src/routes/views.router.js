@@ -6,11 +6,14 @@ import { io } from '../websocket.js'
 import { productsModel } from "../dao/db/models/products.model.js"
 import { cartsModel } from "../dao/db/models/carts.model.js"
 import { passportCall } from "../util.js";
+import ProductsService from "../services/products.service.js";
+
 
 const router = Router();
 
 // Product manager initalizing
 const productManager = new ProductManager();
+const productsService = new ProductsService();
 
 router.get('/', (req, res) => {
     res.redirect("/users/login");
@@ -22,38 +25,9 @@ router.get('/chat', (req, res) => {
 
 router.get('/products', passportCall('jwt'), async (req, res) => {
 
-    const limit = req.query.limit ? parseInt(req.query.limit) : 10;
-    const page = req.query.page ? parseInt(req.query.page) : 1;
-    const category = req.query.category ? req.query.category.toLowerCase() : null;
-    const status = req.query.status === 'true' ? true : req.query.status === 'false' ? false : undefined;
-    const sort = req.query.sort ? (req.query.sort === "asc" ? 1 : req.query.sort === "desc" ? -1 : null) : null;
-
-    const filters = {};
-    const options = {};
-
-    if (category || status !== undefined) {
-        if (category) {
-            filters.category = category;
-        }
-        if (status !== undefined) {
-            filters.status = status;
-        }
-    }
-
-    options.lean = true;
-    options.limit = limit;
-    options.page = page;
-    if (sort !== null) {
-        options.sort = { price: sort };
-    }
-
-    console.log("User loggued: ");
-    console.log(req.user);
-
     try {
 
-        const products = await productsModel.paginate(filters, options);
-        console.log(products);
+        const products = await productsService.getProducts(req.query);
 
         let user, admin = null;
 
@@ -77,11 +51,11 @@ router.get('/products', passportCall('jwt'), async (req, res) => {
 });
 
 router.get('/carts/:cid', async (req, res) => {
-    const perPage = 10;
-    const page = req.query.page || 1;
+/*     const perPage = 10;
+    const page = req.query.page || 1; */
 
     try {
-        const carts = await cartsModel.paginate({}, { page, limit: perPage, lean: true });
+        const carts = await cartsModel.paginate({_id: req.params.cid}, { lean: true });
         res.render("carts", {
             carts: carts.docs,
             currentPage: carts.page,

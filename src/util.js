@@ -17,24 +17,8 @@ export const isValidPassword = (user, password) => {
 
 //JSON Web Tokens JWT functinos:
 export const generateJwtToken = (user) => {
-    return jwt.sign({user}, config.jwtPrivateKey, {expiresIn: '15m'});
+    return jwt.sign({user}, config.jwtPrivateKey, {expiresIn: '20m'});
 };
-
-export const authToken = (req, res, next) => {
-    //Remember that the token comes from the cookies
-    const cookieToken = req.cookies.jwtCookieToken
-    if (!cookieToken) return res.status(401).send({error: "Not authenticated"})
-
-    const token = cookieToken.split(' ')[1]; //The split is made to remove the word Bearer
-    jwt.verify(token, config.jwtPrivateKey, (error, credentials) => {
-        //jwt checks the existing token and checks if it is a valid token or altered one
-        if (error) return res.status(403).send({ error: "Token invalid - Unauthorized" })
-        // Token OK
-        req.user = credentials.user;
-        console.log(req.user);
-        next();
-    })
-}
 
 // Middleware for public routes
 export const publicRouteMiddleware = (req, res, next) => {

@@ -1,4 +1,4 @@
-import { cartsModel } from "../../db/models/carts.model.js"
+import { cartsModel } from "../dao/db/models/carts.model.js";
 import ProductManager from "./products.service.js";
 
 

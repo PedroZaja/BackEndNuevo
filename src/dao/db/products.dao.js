@@ -21,6 +21,9 @@ export default class ProductDao {
     }
 
     async updateProduct(productId, productToReplace) {
-        return await productsModel.updateOne({ _id: productId }, productToReplace);
+        console.log("Product to be updated: ");
+        console.log(productId);
+
+        return await productsModel.findByIdAndUpdate(productId, productToReplace, {new: true});
     }
 }

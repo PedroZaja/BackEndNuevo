@@ -23,7 +23,8 @@ export default class ProductsService {
                 filters.status = status;
             }
         }
-
+        
+        options.lean = true;
         options.limit = limit;
         options.page = page;
         if (sort !== null) {
@@ -53,7 +54,7 @@ export default class ProductsService {
         if (!stock) throw new Error('Stock is required');
         if (!category) throw new Error('Category is required');
 
-        const product = productDao.createProduct({ title, description, code, price, stock, category, thumbnails });
+        const product = await productDao.createProduct({ title, description, code, price, stock, category, thumbnails });
         
         console.log("Product Added: ");
         console.log(product);
@@ -61,10 +62,11 @@ export default class ProductsService {
         return product;
     }
 
-    async updateProduct(id, { title, description, code, price, stock, category, thumbnails }) {
-        if (!id) throw new Error('Product ID is required.');
+    async updateProduct(productId, productFields) {
 
-        const product = await productDao.updateProduct(id, { title, description, code, price, stock, category, thumbnails });
+        if (!productId) throw new Error('Product ID is required.');
+
+        const product = await productDao.updateProduct(productId, productFields);
         return product;
     }
 
@@ -72,6 +74,7 @@ export default class ProductsService {
         if (!id) throw new Error('Product ID is required.');
 
         const product = await productDao.deleteProduct(id);
+
         return product;
     }
 }

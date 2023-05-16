@@ -1,24 +1,25 @@
-import passport from 'passport';
 import { createHash, isValidPassword, generateJwtToken } from '../util.js';
-import { passportCall } from '../util.js';
 import UserManager from '../dao/db/user.dao.js';
+import UserDTO from '../dao/DTO/user.dto.js';
+
 
 const userManager = new UserManager();
 
-export const register = passportCall('register', async (req, res, next) => {
+export const register = async (req, res) => {
     try {
-        return res.status(201).json({
+        console.log(req.user);
+        res.status(201).json({
             message: 'Success',
             redirectUrl: '/users/login'
         });
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ error: error.message, message: 'Error registering user' });
+        res.status(500).json({ error: error.message, message: 'Error registering user' });
     }
-});
+};
 
 
-export const login = passportCall('login', async (req, res, next) => {
+export const login = async (req, res) => {
     try {
 
         const user = req.user;
@@ -32,42 +33,37 @@ export const login = passportCall('login', async (req, res, next) => {
 
         const access_token = generateJwtToken(tokenUser);
         res.cookie('jwtCookieToken', access_token, {
-            maxAge: 180000,
+            maxAge: 1200000,
             httpOnly: true
         });
-        return res.status(200).redirect('/products');
+        res.status(200).json({success: true, redirectUrl: '/products' });
 
     } catch (error) {
         console.error(error);
-        res.status(500).send({ error: error, message: "Error login user." });
+        res.status(500).json({ error: error, message: "Error login user." });
     }
-});
+};
 
 
 export const getCurrent = async (req, res) => {
-    try {
 
-        res.json({ payload: req.user });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send({ error: error, message: "Can't get current user" });
-    }
-
+        const user = new UserDTO(req.user)
+        res.send(user);
 }
 
 
 export const logout = async (req, res) => {
     req.session.destroy();
     res.clearCookie('jwtCookieToken');
-    res.redirect('/users/login');
     console.log("User logout");
-    res.send({ message: "Success!", payload: "logout" });
+    res.redirect('/users/login');
 }
 
 export const restorePass = async (req, res) => {
     try {
         const { email, password } = req.body;
-        const user = await userManager.findOne( {email: email} );
+        const user = await userManager.findOne(email);
+        console.log("Restoring pass for: " + email);
 
         if (!user) {
             return res.status(401).json({ status: 'error', error: "Can't find user." });
@@ -78,8 +74,9 @@ export const restorePass = async (req, res) => {
             password: createHash(password)
         }
 
-        const result = await userManager.updateOne({ email: email }, newUser);
+        const result = await userManager.updateUser({ email: email }, newUser);
 
+        console.log("Password restored");
         res.status(200).json({ status: "success", message: `Password restored` })
 
     } catch (error) {
@@ -89,25 +86,26 @@ export const restorePass = async (req, res) => {
 
 }
 
-export const gitHubLogin = passport.authenticate('github', { scope: ['user:email'] });
+// export const gitHubLogin = passport.authenticate('github', { scope: ['user:email'] });
 
-export const gitHubCallback = passport.authenticate('github', { failureRedirect: '/github/error' }, async (req, res) => {
+export const gitHubCallback  = async (req, res) => {
+
     const user = req.user;
 
-    tokenUser = {
+    req.session.user = {
         name: `${user.first_name} ${user.last_name}`,
         email: user.email,
         age: user.age,
         role: "admin"
     };
 
-    const access_token = generateJwtToken(tokenUser);
+    const access_token = generateJwtToken(req.session.user);
     console.log(access_token);
 
     res.cookie('jwtCookieToken', access_token, {
-        maxAge: 180000,
+        maxAge: 900000,
         httpOnly: true
     });
 
     res.redirect("/github");
-});
+};
