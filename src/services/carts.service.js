@@ -1,251 +1,116 @@
-import { cartsModel } from "../dao/db/models/carts.model.js";
-import ProductManager from "./products.service.js";
+import CartDao from "../dao/db/carts.dao.js";
+import ProductsService from "./products.service.js";
+import TicketService from "./tickets.service.js";
+// import CustomError from "../middlewares/errors/CustomError.js"
+// import EErrors from "../middlewares/errors/errors-enum.js"
+// import { updateQuantityInCartErrorInfo } from "../middlewares/errors/messages/user-creation-error.message.js";
 
+const cartsDao = new CartDao();
+const productService = new ProductsService();
+const ticketService = new TicketService();
 
-export default class CartManager {
-    constructor() {
-        this.carts = cartsModel;
+export default class CartsService {
+
+    async getCart(id) {
+        if (!id) throw new Error('Product ID is required.');
+
+        const cart = await cartsDao.getCart(id);
+        return cart;
     }
 
-    //Adds a new empty cart array and saves it to the JSON file.
-    async addCart() {
-        try {
+    async createCart() {
+        const cart = await cartsDao.createCart();
+        return cart;
+    }
 
-            const result = await this.carts.create({});
+    async updateQuantity(cartId, productId, quantity) {
 
-            console.log("Creating Cart:");
-            console.log(result);
+        if (!cartId) throw new Error('Cart ID is required.');
+        if (!productId) throw new Error('Product ID is required.');
 
-            return {
-                success: true,
-                data: result
-            };
+        // Prueba uso customError
 
-        } catch (error) {
-            console.error(error.message);
-            throw Error(`Error creating new Cart: ${JSON.stringify(newCart)}, error detail: ${error}`);
+        // if (!cartId || !productId) {
+        //     CustomError.createError({
+        //         name: "Cart Update Error",
+        //         cause: updateQuantityInCartErrorInfo(cartId, productId),
+        //         message: "Error trying to update the cart",
+        //         code: EErrors.INVALID_TYPES_ERROR
+        //     })
+        // }
+
+        quantity = quantity || 1;
+        if (isNaN(quantity) || quantity <= 0) {
+            throw new Error('Quantity must be a positive number.');
         }
-    }
 
-    async addProductToCart(cartId, productId) {
-        try {
+        const productInCart = await cartsDao.findProduct(cartId, productId);
+        console.log(productInCart)
 
-            const productManager = new ProductManager();
-            // Check if the product exist
-            const checkProduct = await productManager.getProductById(productId);
+        if (!productInCart) {
 
-            if (!checkProduct.success) {
-                return {
-                    success: false,
-                    message: `Product with id ${productId} not found.`,
-                };
-            }
+            const updatedCart = await cartsDao.addProduct(cartId, productId, quantity);
+            return updatedCart;
+            
+        } else {
 
-            const cart = await this.carts.findById(cartId);
-
-            if (!cart) {
-                return {
-                    success: false,
-                    message: "Cart with the provided id doesn't exist"
-                };
-
-            } else {
-                // Check if product already exists in cart
-
-                let existingProduct = cart.products.find(p => p.productId.equals(productId));
-
-                if (existingProduct) {
-                    // Add 1
-                    existingProduct.quantity++;
-                    const result = await cart.save();
-
-                    console.log("Adding 1 more product "+productId+" to Cart: "+cartId);
-                
-                    return {
-                        success: true,
-                        data: result,
-                        message: `1 more product with id ${productId} added to cart ${cartId}`
-                    };
-
-                } else {
-                    const newProduct = { productId: productId, quantity: 1 };
-                    cart.products.push(newProduct);
-                    const result = await cart.save();
-                
-                    console.log("Adding 1 product "+productId+" to Cart: "+cartId);
-                
-                    return {
-                        success: true,
-                        data: result,
-                        message: `1 product with id ${productId} added to cart ${cartId}`
-                    };
-                }
-            }
-
-        } catch (error) {
-            console.error(error.message);
-            throw Error(`Error while trying to add the product id ${productId.product}, error: ${error}`);
-        }
-    }
-
-    async updateCart(cartId, products) {
-        try {
-            console.log("PRODUCTS "+JSON.stringify(products));
-            console.log("TYPE PRODUCTS "+typeof(products));
-
-            const cart = await this.carts.findById(cartId);
-            if (!cart) {
-                return {
-                    success: false,
-                    message: "Cart with the provided id doesn't exist"
-                };
-            } else {
-                const updatedProducts = products.map(p => ({
-                    productId: p.productId,
-                    quantity: p.quantity || 1
-                }));
-                cart.products = updatedProducts;
-                const result = await cart.save();
-                return {
-                    success: true,
-                    data: result,
-                    message: `Cart with id ${cartId} updated successfully`
-                };
-            }
-        } catch (error) {
-            console.error(error.message);
-            throw Error(`Error while trying to update the cart with id ${cartId}, error: ${error}`);
-        }
-    }
-
-    async deleteCart(cartId) {
-        try {
-            const cart = await this.carts.findById(cartId);
-            if (!cart) {
-                return {
-                    success: false,
-                    message: "Cart with the provided id doesn't exist"
-                };
-            } else {
-                await cart.delete();
-                return {
-                    success: true,
-                    message: `Cart with id ${cartId} deleted successfully`
-                };
-            }
-        } catch (error) {
-            console.error(error.message);
-            throw Error(`Error while trying to delete the cart with id ${cartId}, error: ${error}`);
+            const updatedCart = await cartsDao.updateQuantity(cartId, productId, quantity);
+            return updatedCart;
         }
     }
 
     async deleteProductFromCart(cartId, productId) {
-        try {
-            const cart = await this.carts.findById(cartId);
-            if (!cart) {
-                return {
-                    success: false,
-                    message: "Cart with the provided id doesn't exist"
-                };
-            } else {
-                const index = cart.products.findIndex(p => p.productId.equals(productId));
-                if (index === -1) {
-                    return {
-                        success: false,
-                        message: `Product with id ${productId} not found in cart ${cartId}`
-                    };
-                }
-                cart.products.splice(index, 1);
-                const result = await cart.save();
-                return {
-                    success: true,
-                    data: result,
-                    message: `Product with id ${productId} removed from cart ${cartId}`
-                };
-            }
-        } catch (error) {
-            console.error(error.message);
-            throw Error(`Error while trying to remove the product id ${productId} from cart ${cartId}, error: ${error}`);
-        }
-    }
 
-    async updateProductQuantityInCart(cartId, productId, quantity) {
-        try {
-            const cart = await this.carts.findById(cartId);
-            if (!cart) {
-                return {
-                    success: false,
-                    message: "Cart with the provided id doesn't exist"
-                };
-            } else {
-                const existingProduct = cart.products.find(p => p.productId.equals(productId));
-                if (!existingProduct) {
-                    return {
-                        success: false,
-                        message: `Product with id ${productId} not found in cart ${cartId}`
-                    };
-                }
-                existingProduct.quantity = quantity;
-                const result = await cart.save();
-                return {
-                    success: true,
-                    data: result,
-                    message: `Quantity of product with id ${productId} updated to ${quantity} in cart ${cartId}`
-                };
-            }
-        } catch (error) {
-            console.error(error.message);
-            throw Error(`Error while trying to update the quantity of the product id ${productId} in cart ${cartId}, error: ${error}`);
-        }
+        if (!cartId) throw new Error('Cart ID is required.');
+        if (!productId) throw new Error('Product ID is required.');
+
+        const cart = await cartsDao.deleteProduct(cartId, productId);
+        return cart;
     }
 
     async emptyCart(cartId) {
-        try {
-            const cart = await this.carts.findById(cartId);
+        if (!cartId) throw new Error('Cart ID is required.');
 
-            if (!cart) {
-                return {
-                    success: false,
-                    message: "Cart with the provided id doesn't exist",
-                };
-            }
-
-            cart.products = [];
-            const result = await cart.save();
-
-            return {
-                success: true,
-                data: result,
-                message: "Cart has been emptied",
-            };
-            
-        } catch (error) {
-            console.error(error);
-            return {
-                success: false,
-                message: "Error while emptying the cart",
-            };
-        }
+        const cart = await cartsDao.emptyCart(cartId);
+        return cart;
     }
 
-    async getCart(cartId) {
-        try {
-            const cart = await this.carts.findById(cartId);
-            if (!cart) {
-                return {
-                    success: false,
-                    message: "Cart with the provided id doesn't exist"
-                };
+    async purchaseCart(cartId, user) {
+        console.log("USER");
+        console.log(user);
+
+        if (!cartId) throw new Error('Cart ID is required.');
+
+        const purchaser = user.email;
+
+        let cart = await cartsDao.getCart(cartId);
+        if (!cart.products.length) throw new Error('Cart is empty')
+
+        const notProcessed = []
+        let total = 0;
+
+        for (const item of cart.products) {
+            if (item.quantity <= item.productId.stock) {
+                let updatedStock = item.productId.stock - item.quantity;
+                await productService.updateProduct(item.productId._id, { stock: updatedStock })
+
+                total += item.quantity * item.productId.price;
+
+                await cartsDao.deleteProduct(cartId, item.productId._id);
+
             } else {
-                return {
-                    success: true,
-                    message: `Cart with id ${cartId} found`,
-                    data: cart
-                };
-            }
-        } catch (error) {
-            console.error(error.message);
-            throw Error(`Error while trying to get the cart with id ${cartId}, error: ${error}`);
+
+                notProcessed.push(item.productId._id)
+            };
         }
+
+        if (total == 0) {
+            const result = {Error: "Products out of stock returned:", productsReturned: notProcessed}
+            return result;
+        }
+
+        let ticket = ticketService.createTicket({ total, purchaser });
+
+        return { ticket, notProcessed };
     }
 }

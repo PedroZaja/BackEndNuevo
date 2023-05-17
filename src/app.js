@@ -9,6 +9,8 @@ import config from "./config/config.js";
 //Database
 import mongoose from 'mongoose';
 import MongoStore from 'connect-mongo';
+// Errors
+import errorHandler from './middlewares/errors/errors.middleware.js'
 // Passport
 import passport from 'passport';
 import initializePassport from './config/passport.config.js';
@@ -22,6 +24,7 @@ import sessionsRouter from './routes/auth.router.js';
 import githubLoginRouter from './routes/github-login.views.router.js';
 import ticketsRouter from './routes/tickets.router.js'
 import emailRouter from './routes/email.router.js';
+import mockingRouter from './routes/mock.router.js';
 
 //Declare Express server.
 const app = express();
@@ -52,6 +55,7 @@ app.use(session(
     }
 ))
 
+
 // COOKIES
 app.use(cookieParser("Cookie$C0der"));
 
@@ -70,9 +74,10 @@ app.use("/users", usersViewsRouter);
 app.use("/github", githubLoginRouter);
 app.use("/api/mail", emailRouter);
 app.use("/", viewsRouter);
+app.use('/mockingproducts', mockingRouter)
 
 const httpServer = app.listen(config.port, () => {
-    console.log(`Servidor activo en el puerto: ${config.port}`);
+    console.log(`Servidor corriendo en el puerto: ${config.port}`);
 })
 // Initialize websocket Server
 setupWebSocket(httpServer);
@@ -81,10 +86,13 @@ setupWebSocket(httpServer);
 const connectMongoDB = async () => {
     try {
         await mongoose.connect(config.mongoUrl);
-        console.log("Conexion a la base de datos exitosa!");
+        console.log("Conexion establecida con la DB!");
     } catch (error) {
-        console.log("Error conectando a la base de datos: "+error);
+        console.log("Error al conectar a la DB "+error);
     }
 
 }
 connectMongoDB();
+
+//MIDDLEWARE ERROR
+app.use(errorHandler);

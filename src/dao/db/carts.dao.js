@@ -33,7 +33,7 @@ export default class CartDao {
 
     async deleteProduct(cartId, productId) {
 
-        const deletedProduct = cartsModel.findOneAndUpdate({_id: cartId}, {$pull: {products: {product: productId}}})
+        const deletedProduct = await cartsModel.findOneAndUpdate({_id: cartId}, {$pull: {products: {product: productId}}})
         return deletedProduct;
     }
 

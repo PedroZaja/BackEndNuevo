@@ -6,6 +6,7 @@ import { createHash, isValidPassword } from '../util.js'
 import config from './config.js';
 import UserManager from '../dao/db/user.dao.js';
 import CartsService from '../services/carts.service.js';
+import UserDTO from '../dao/DTO/user.dto.js';
 
 const userManager = new UserManager();
 const cartsService = new CartsService();
@@ -32,13 +33,13 @@ const initializePassport = () => {
                     return done(null, false, { messages: 'User already exist.' });
                 }
 
-                const user = {
-                    first_name,
-                    last_name,
+                const user = new UserDTO({
+                    first_name: first_name,
+                    last_name: last_name,
                     email: username,
-                    age,
+                    age: age,
                     password: createHash(password)
-                }
+                });
 
                 if (user.email === config.adminName && password === config.adminPassword) {
                     user.role = 'admin';
@@ -182,5 +183,4 @@ const cookieExtractor = req => {
 };
 
 export default initializePassport;
-
 
