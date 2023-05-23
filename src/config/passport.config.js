@@ -22,14 +22,14 @@ const initializePassport = () => {
         { passReqToCallback: true, usernameField: 'email' }, async (req, username, password, done) => {
 
             const { first_name, last_name, age } = req.body;
-            console.log("Registering user: " + JSON.stringify(req.body));
-
+            req.logger.info(`Registering user:  ${JSON.stringify(req.body)}`);
+            
             try {
 
                 const userExists = await userManager.findOne(username);
 
                 if (userExists) {
-                    console.log("User already exist.");
+                    req.logger.warn(`User already exist. username: ${username}`);
                     return done(null, false, { messages: 'User already exist.' });
                 }
 
@@ -63,17 +63,17 @@ const initializePassport = () => {
                 const user = await userManager.findOne(username);
 
                 if (!user) {
-                    console.warn("User doesn't exists with username: " + username);
+                    req.logger.warn(`User doesn't exists with username: ${username}`);
                     return done(null, false, { messages: "Invalid credentials." });
                 }
 
                 if (!isValidPassword(user, password)) {
-                    console.warn("Invalid credentials for user: " + username);
+                    req.logger.warn(`Invalid credentials for user: ${username}`);
                     return done(null, false, { messages: "Invalid credentials." });
                 }
 
                 if (!user.cart) {
-                    console.log("Creating Cart for " + username);
+                    req.logger.info(`Creating Cart for  user: ${username}`);
                     const cart = await cartsService.createCart();
 
                     user.cart = cart._id;
@@ -102,7 +102,7 @@ const initializePassport = () => {
                 return done(null, jwt_payload.user);
 
             } catch (error) {
-                console.error(error);
+                req.logger.error(`Error in JWT strategy  ${error}`);
                 return done(error);
             }
         }
@@ -117,17 +117,17 @@ const initializePassport = () => {
             scope: ['user:email']
         },
         async (accessToken, refreshToken, profile, done) => {
-            console.log("Profile obtained from user: ");
-            console.log(profile);
+            req.logger.info(`Profile obtained from user: ${profile}`);
+
             try {
                 const user = await userManager.findOne({
                     email: profile._json.email
                 });
-
-                console.log("User finded for login: " + user);
+                
+                req.logger.info(`User finded for login: ${user}`);
 
                 if (!user) {
-                    console.warn("User doesn't exists with username: " + profile._json.email);
+                    req.logger.warn(`User doesn't exists with username: ${profile._json.email}`);
 
                     let newUser = {
                         first_name: profile._json.name,
@@ -175,8 +175,7 @@ const cookieExtractor = req => {
     let token = null;
 
     if (req && req.cookies) { //Validate that the request and cookies exist.
-        console.log("Token from Cookie:");
-        console.log(req.cookies);
+        req.logger.info(`Token from Cookie: ${req.cookies}`);
         token = req.cookies['jwtCookieToken']; //-> Keep in mind this name is that of the Cookie.
     }
     return token;

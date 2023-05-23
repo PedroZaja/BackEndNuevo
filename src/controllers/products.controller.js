@@ -29,7 +29,7 @@ export const getProductById = async (req, res) => {
     
 }
 
-export const createProduct = async (req, res) => {
+export const createProduct = async (req, res, next) => {
     try {
         let newProduct = req.body;
         let productCreated = await productsService.createProduct(newProduct);
@@ -37,8 +37,7 @@ export const createProduct = async (req, res) => {
         res.status(200).json(productCreated);
 
     } catch (error) {
-        console.error(error);   
-        res.status(400).json({ error: "Error creating the product. "+error.message });
+        next(error);
     }
     
 }

@@ -20,7 +20,7 @@ form.addEventListener('submit', e => {
 
         } else if (result.status === 401) {
             console.log(result);
-            alert("Invalid login, check your credentials!");
+            alert("Invalid data, try another email");
         } else {
             console.log(result);
             alert(`Error: creating the user`);

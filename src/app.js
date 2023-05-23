@@ -10,7 +10,9 @@ import config from "./config/config.js";
 import mongoose from 'mongoose';
 import MongoStore from 'connect-mongo';
 // Errors
-import errorHandler from './middlewares/errors/errors.middleware.js'
+import errorHandler from './middlewares/errors/index.js'
+import { addLogger, customLogger } from './config/logger.js';
+
 // Passport
 import passport from 'passport';
 import initializePassport from './config/passport.config.js';
@@ -25,6 +27,7 @@ import githubLoginRouter from './routes/github-login.views.router.js';
 import ticketsRouter from './routes/tickets.router.js'
 import emailRouter from './routes/email.router.js';
 import mockingRouter from './routes/mock.router.js';
+import logRouter from './routes/log.router.js';
 
 //Declare Express server.
 const app = express();
@@ -32,6 +35,8 @@ const app = express();
 //Prepare server settings to receive JSON objects
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
+// Define logger middleware
+app.use(addLogger);
 
 // Define path for static content
 app.use(express.static(path.join(__dirname +'/public')));
@@ -75,9 +80,14 @@ app.use("/github", githubLoginRouter);
 app.use("/api/mail", emailRouter);
 app.use("/", viewsRouter);
 app.use('/mockingproducts', mockingRouter)
+app.use('/loggerTest', logRouter)
+
+
+//MIDDLEWARE ERROR
+app.use(errorHandler);
 
 const httpServer = app.listen(config.port, () => {
-    console.log(`Servidor corriendo en el puerto: ${config.port}`);
+    console.log(`Servidor activo en el puerto: ${config.port}`);
 })
 // Initialize websocket Server
 setupWebSocket(httpServer);
@@ -86,13 +96,12 @@ setupWebSocket(httpServer);
 const connectMongoDB = async () => {
     try {
         await mongoose.connect(config.mongoUrl);
-        console.log("Conexion establecida con la DB!");
+        console.log("Coneccion a la base de datos exitosa!");
     } catch (error) {
-        console.log("Error al conectar a la DB "+error);
+        console.log("Error al conectarse a la base de datos! "+error);
     }
 
 }
 connectMongoDB();
 
-//MIDDLEWARE ERROR
-app.use(errorHandler);
+

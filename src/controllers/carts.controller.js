@@ -1,7 +1,4 @@
 import CartsService from "../services/carts.service.js";
-// import CustomError from "../middlewares/errors/CustomError.js"
-// import EErrors from "../middlewares/errors/errors-enum.js"
-// import { updateQuantityInCartErrorInfo } from "../middlewares/errors/messages/user-creation-error.message.js";
 
 const cartService = new CartsService;
 
@@ -32,7 +29,7 @@ export const createCart = async (req, res) => {
     
 }
 
-export const updateProductQuantityToCart = async (req, res) => {
+export const updateProductQuantityToCart = async (req, res, next) => {
     try {
 
         const cartId = req.params.cid;
@@ -44,13 +41,7 @@ export const updateProductQuantityToCart = async (req, res) => {
         res.status(200).json(cart);
 
     } catch (error) {
-        console.error(error);
-        res.status(400).json({error: "Error updating product quantity in cart. "+error.message});
-        // PRUEBA 2 CUSTOM ERROR
-        // CustomError.createError({
-        //     message: "Error trying to update the cart",
-        //     code: EErrors.INVALID_TYPES_ERROR
-        // })
+        next(error)
     }
     
 }

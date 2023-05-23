@@ -1,4 +1,6 @@
 import ProductDao from "../dao/db/products.dao.js";
+import CustomError from "../middlewares/errors/CustomError.js"
+import { updateQuantityInCartErrorInfo, createProductErrorInfo } from "../middlewares/errors/messages/error.messages.js";
 
 const productDao = new ProductDao();
 
@@ -47,12 +49,21 @@ export default class ProductsService {
 
         const {title, description, code, price, stock, category, thumbnails } = parameters;
 
-        if (!title) throw new Error('Title is required');
-        if (!description) throw new Error('Description is required');
-        if (!code) throw new Error('Code is required');
-        if (!price) throw new Error('Price is required');
-        if (!stock) throw new Error('Stock is required');
-        if (!category) throw new Error('Category is required');
+        // if (!title) throw new Error('Title is required');
+        // if (!description) throw new Error('Description is required');
+        // if (!code) throw new Error('Code is required');
+        // if (!price) throw new Error('Price is required');
+        // if (!stock) throw new Error('Stock is required');
+        // if (!category) throw new Error('Category is required');
+
+        if (!title || !description || !code || !price || !stock || !category) {
+            throw CustomError.createError({
+                statusCode: 401,
+                code: 3,
+                message: "Some product info is missing",
+                cause: createProductErrorInfo({title, description, code, price, stock, category})
+            })
+        }
 
         const product = await productDao.createProduct({ title, description, code, price, stock, category, thumbnails });
         

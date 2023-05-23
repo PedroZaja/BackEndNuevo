@@ -1,9 +1,8 @@
 import CartDao from "../dao/db/carts.dao.js";
 import ProductsService from "./products.service.js";
 import TicketService from "./tickets.service.js";
-// import CustomError from "../middlewares/errors/CustomError.js"
-// import EErrors from "../middlewares/errors/errors-enum.js"
-// import { updateQuantityInCartErrorInfo } from "../middlewares/errors/messages/user-creation-error.message.js";
+import CustomError from "../middlewares/errors/CustomError.js"
+import { updateQuantityInCartErrorInfo, generateErrorInfo } from "../middlewares/errors/messages/error.messages.js";
 
 const cartsDao = new CartDao();
 const productService = new ProductsService();
@@ -25,20 +24,19 @@ export default class CartsService {
 
     async updateQuantity(cartId, productId, quantity) {
 
-        if (!cartId) throw new Error('Cart ID is required.');
-        if (!productId) throw new Error('Product ID is required.');
+        // if (!cartId) throw new Error('Cart ID is required.');
+        // if (!productId) throw new Error('Product ID is required.');
 
-        // Prueba uso customError
 
-        // if (!cartId || !productId) {
-        //     CustomError.createError({
-        //         name: "Cart Update Error",
-        //         cause: updateQuantityInCartErrorInfo(cartId, productId),
-        //         message: "Error trying to update the cart",
-        //         code: EErrors.INVALID_TYPES_ERROR
-        //     })
-        // }
-
+        if (!cartId || !productId || productId === "null" || productId === "undefined") {
+            throw CustomError.createError({
+                statusCode: 401,
+                code: 1,
+                message: "The cart or product are invalid",
+                cause: updateQuantityInCartErrorInfo(cartId, productId)
+            })
+        }
+                
         quantity = quantity || 1;
         if (isNaN(quantity) || quantity <= 0) {
             throw new Error('Quantity must be a positive number.');

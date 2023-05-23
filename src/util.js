@@ -24,7 +24,7 @@ export const generateJwtToken = (user) => {
 // Middleware for public routes
 export const publicRouteMiddleware = (req, res, next) => {
     if (req.user) {
-        console.log("Already logged in, redirect");
+        req.logger.info(`Already logged in, redirect`);
         return res.redirect('/products');
     }
     next();
@@ -33,7 +33,7 @@ export const publicRouteMiddleware = (req, res, next) => {
 // Middleware for private routes
 export const privateRouteMiddleware = (req, res, next) => {
     if (!req.user) {
-        console.log("Redirect to log in");
+        req.logger.info(`Redirect to log in`);
         return res.redirect('/users/login');
     }
     next();
@@ -43,8 +43,7 @@ export const privateRouteMiddleware = (req, res, next) => {
 export const passportCall = (strategy) => {
     return async (req, res, next) => {
 
-        console.log("Calling strategy:");
-        console.log(strategy);
+        req.logger.info(`Calling strategy: ${strategy}`);
 
         passport.authenticate(strategy, function (err, user, info) {
             
@@ -52,8 +51,9 @@ export const passportCall = (strategy) => {
             if (!user) {
                 return res.status(401).send({error: info.messages?info.messages:info.toString()});
             }
-            console.log("User obtained from the strategy: ");
-            console.log(user);
+
+            req.logger.info(`User obtained from the strategy: ${user}`);
+
             req.user = user;
             next();
 
@@ -67,7 +67,7 @@ export const generateMockProduct = () => {
         _id: faker.database.mongodbObjectId(),
         code: faker.string.alphanumeric(7),
         title: faker.commerce.productName(),
-        description: faker.lorem.text(),
+        description: faker.commerce.productDescription(),
         price: parseInt(faker.string.numeric(3)),
         stock: parseInt(faker.string.numeric(2)),
         category: faker.commerce.department(),

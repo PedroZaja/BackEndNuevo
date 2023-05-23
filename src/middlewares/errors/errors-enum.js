@@ -1,8 +1,8 @@
 const EErrors = {
-    INVALID_TYPES_ERROR: 2,
-    DATABASE_ERROR: 3,
-    MISSING_DATA: 4,
-    RENDERING_ERROR: 5,
-    ROUTING_ERROR: 6
+    INVALID_TYPES_ERROR: 1,
+    DATABASE_ERROR: 2,
+    MISSING_DATA: 3,
+    RENDERING_ERROR: 4,
+    ROUTING_ERROR: 5
 };
 export default EErrors;
