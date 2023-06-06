@@ -9,12 +9,11 @@ export const updateQuantityInCartErrorInfo = (cart, productId) => {
 export const createProductErrorInfo = (product) => {
     return `One or more properties were sent incomplete or are invalid.
             List of required properties:
-            * title: type String, received: ${product.title}
-            * description: type String, received: ${product.description}
+            * titulo: type String, received: ${product.titulo}
+            * descripcion: type String, received: ${product.descripcion}
             * code: type String, received: ${product.code}
-            * price: type Number, received: ${product.price}
+            * precio: type Number, received: ${product.precio}
             * stock: type Number, received: ${product.stock}
-            * category: type String, received: ${product.category}
             `;
 };
 

@@ -9,7 +9,7 @@ form.addEventListener('submit', e => {
         obj[key] = value
     });
 
-    fetch('/api/sessions/restore', {
+    fetch('/api/sessions/recover', {
         method: 'POST',
         body: JSON.stringify(obj),
         headers: {
@@ -18,10 +18,10 @@ form.addEventListener('submit', e => {
     }).then(result => {
         if (result.status === 200) {
             result.json();
-            alert("La contraseña se cambio correctamente!")
+            alert("Password restored successfully")
             window.location.replace('/users/login');
         } else {
-            alert(`Error cambiando la contraseña`)
+            alert(`Error restoring password`)
         }
     }).then(
         json => console.log(json));

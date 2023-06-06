@@ -16,5 +16,7 @@ COPY . .
 #El puerto a exponer en nuestro contenedor.
 EXPOSE 9090
 
+ENV MONGO_URL = mongodb+srv://PedroZaja:pedrozaja@pedrozaja.nsf6vel.mongodb.net/
+
 #Ejecutar el comando para arrancar la app. (validar que exista el script en el package.json)
 CMD [ "npm", "start"]

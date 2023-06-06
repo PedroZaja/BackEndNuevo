@@ -42,6 +42,11 @@ export default class CartDao {
         return cart;
     }
 
+    async getPaginatedCart(cartId) {
+        const cart = await cartsModel.findOneAndReplace({_id: cartId}, { lean: true });
+        return cart;
+    }
+
 }
 
 /* async addProductToCart(cartId, productId) {

@@ -43,7 +43,7 @@ export default class CartsService {
         }
 
         const productInCart = await cartsDao.findProduct(cartId, productId);
-        console.log(productInCart)
+        req.logger.debug(`Product to update in cart ${productInCart}`);
 
         if (!productInCart) {
 
@@ -74,8 +74,7 @@ export default class CartsService {
     }
 
     async purchaseCart(cartId, user) {
-        console.log("USER");
-        console.log(user);
+        req.logger.info(`User ${user} wants to finalize his purchase`);
 
         if (!cartId) throw new Error('Cart ID is required.');
 
@@ -110,5 +109,12 @@ export default class CartsService {
         let ticket = ticketService.createTicket({ total, purchaser });
 
         return { ticket, notProcessed };
+    }
+
+    async getPaginatedCart(cartId) {
+        if (!cartId) throw new Error('Cart ID is required.');
+
+        const cart = await cartsDao.getPaginatedCart(cartId);
+        return cart;
     }
 }
