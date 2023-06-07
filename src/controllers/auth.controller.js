@@ -1,6 +1,7 @@
 import { createHash, isValidPassword, generateJwtToken } from '../util.js';
 import UserManager from '../dao/db/user.dao.js';
 import UserDTO from '../dao/DTO/user.dto.js';
+import { transporter, sendEmail } from './email.controller.js';
 
 
 const userManager = new UserManager();
@@ -36,7 +37,7 @@ export const login = async (req, res) => {
             maxAge: 1200000,
             httpOnly: true
         });
-        res.status(200).json({success: true, redirectUrl: '/products' });
+        res.status(200).json({ success: true, redirectUrl: '/products' });
 
     } catch (error) {
         console.error(error);
@@ -47,8 +48,8 @@ export const login = async (req, res) => {
 
 export const getCurrent = async (req, res) => {
 
-        const user = new UserDTO(req.user)
-        res.send(user);
+    const user = new UserDTO(req.user)
+    res.send(user);
 }
 
 
@@ -61,58 +62,64 @@ export const logout = async (req, res) => {
 
 export const recoverPass = async (req, res) => {
     try {
-        const { email, password } = req.body;
+
+        const { email } = req.body;
         const user = await userManager.findOne(email);
-        req.logger.info(`Restoring pass for: ${email}`);
+        req.logger.info(`Creating a restore pass token for: ${email}`);
 
         if (!user) {
             return res.status(401).json({ status: 'error', error: "Can't find user." });
         }
 
-        const newUserPass = {
-            email: email,
-            password: createHash(password)
-        }
+        let restorePassToken = generateJwtToken(email, '1h')
+        console.log(restorePassToken);
 
-        const result = await userManager.updateUser({ email: email }, newUserPass);
+        transporter.sendMail({
+            from: 'jplarussa@gmail.com',
+            to: email,
+            subject: 'Restore password from JP Ecommerce',
+            html: `
+            <div style="display: flex; flex-direction: column; justify-content: center;  align-items: center;">
+            <h1>To reset your password click <a href="http://localhost:8080/recoverLanding/${restorePassToken}">here</a></h1>
+            </div>`
+        });
 
-        req.logger.info(`Password restored`);
-        res.status(200).json({ status: "success", message: `Password restored` })
-
-
-/*         try {
-            let email = req.user.email;
-            let token = jwt.sign({email}, config.jwtKey, {expiresIn: "1h"});
-            req.logger.debug("Pre nodemailer")
-            try {
-                transport.sendMail({from: 'aaa@gmail.com',
-                to: email,
-                subject: 'Reestablece tu contraseña',
-                html: `
-                <div style="background-color: black; color: green; display: flex; flex-direction: column; justify-content: center;  align-items: center;">
-                    <h1>Para reestablecer tu contraseña haz click <a href="http://localhost:8080/recoverLanding/${token}">aqui</a></h1>
-                </div>
-                `});
-            } catch (error) {
-                return res.send({status: "error", message: "El email es inválido"})
-            }
-            res.send({status: "Ok", message: "email enviado"});
-        } catch (error) {
-            next(error)
-        } */
-
-
+        req.logger.info(`Password reset token was sent`);
+        res.status(200).json({ status: "success", message: `Password reset token was sent` })
 
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: error, message: 'Password could not be restored' });
     }
-
 }
+export const restorePass = async(req, res, next) => {
+    try {
+
+        const {token, newPassword} = req.body;
+        if (newPassword.trim() == 0) return res.send({status: "error", message: "The password cannot be empty"});
+
+        // let result;
+/*         
+        account.password = createHash(password);
+
+        let result = await um.editOne(account.email, account); */
+
+        if (result.acknowledged) res.send({status: "Ok", message: "Contraseña cambiada"});
+    } catch(error) {
+        next(error)
+    }
+}
+
+        /*         const newUserPass = {
+                    email: email,
+                    password: createHash(password)
+                } 
+        
+                const result = await userManager.updateUser({ email: email }, newUserPass);*/
 
 // export const gitHubLogin = passport.authenticate('github', { scope: ['user:email'] });
 
-export const gitHubCallback  = async (req, res) => {
+export const gitHubCallback = async (req, res) => {
 
     const user = req.user;
 
@@ -134,23 +141,7 @@ export const gitHubCallback  = async (req, res) => {
     res.redirect("/github");
 };
 
-/* restorePass = async(req, res, next) => {
-    try {
-        req.logger.http(`${req.method} at ${req.url} - ${new Date().toLocaleDateString()}`);
-
-        let account = req.account;
-        let password = req.password;
-
-        account.password = createHash(password);
-
-        let result = await um.editOne(account.email, account);
-
-        if (result.acknowledged) res.send({status: "Ok", message: "Contraseña cambiada"});
-    } catch(error) {
-        next(error)
-    }
-}
-
+/*
 postSwapUserClass = async(req, res, next) => {
     try {
         req.logger.http(`${req.method} at ${req.url} - ${new Date().toLocaleDateString()}`);

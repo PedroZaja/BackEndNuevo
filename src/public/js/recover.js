@@ -17,12 +17,14 @@ form.addEventListener('submit', e => {
         }
     }).then(result => {
         if (result.status === 200) {
-            result.json();
-            alert("Password restored successfully")
-            window.location.replace('/users/login');
+            return result.json();
         } else {
             alert(`Error restoring password`)
+            throw new Error('Error restoring password');
         }
     }).then(
-        json => console.log(json));
+        json => {
+            console.log(json);
+            alert("An email has been sent to reset your password");
+        })
 });

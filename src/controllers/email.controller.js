@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer';
 import config from '../config/config.js';
 
-const transporter = nodemailer.createTransport({
+export const transporter = nodemailer.createTransport({
     service: 'gmail',
     port: 587,
     auth: {
@@ -12,9 +12,9 @@ const transporter = nodemailer.createTransport({
 
 transporter.verify(function (error, success) {
     if (error) {
-        console.log(error);
+        console.warn(`Transporter verify error:  ${error} `);
     } else {
-        console.log('Server is ready to take our messages');
+        console.info(`Server is ready to take our messages.`);
     }
 });
 
@@ -22,8 +22,8 @@ const mailOptions = (receiver) => {
     return {
         from: "Coder Test " + config.gmailAccount,
         to: receiver,
-        subject: "Prueba de envio de mail!",
-        html: "<div><h1>Esta es una prueba de envio de mail!</h1></div>",
+        subject: "Prueba de Email!",
+        html: "<div><h1>Esta es una prueba de envio de mail con Nodemailer!</h1></div>",
         attachments: []
     }
 }
@@ -37,11 +37,11 @@ export const sendEmail = (req, res) => {
             if (error) {
                 res.status(400).send({ message: "Error", payload: error });
             }
-            console.log('Message sent: %s', info.messageId);
+            req.logger.console.info(`Message sent: %s ${info.messageId}`);
             res.send({ message: "Success!", payload: info });
         });
     } catch (error) {
-        console.error(error);
+        req.logger.console.warn(`Send email error:  ${error} `);
         res.status(500).send({ error: error, message: "Could not send email from:" + config.gmailAccount });
     }
 };

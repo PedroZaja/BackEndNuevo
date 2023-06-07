@@ -9,11 +9,10 @@ socket.on('update-products', (data) => {
     data.forEach(p => {
         renderedProducts += `
         <div class="product-card">
-        <h4>${p.title}</h3>
-        <p>${p.description}</p>
-        <p>Price: $ ${p.price}</p>
+        <h4>${p.titulo}</h3>
+        <p>${p.descripcion}</p>
+        <p>Price: $ ${p.precio}</p>
         <p>Stock: ${p.stock}</p>
-        <p>Category: ${p.category}</p>
         <p>Code: ${p.code}</p>
         <p>ID: ${p._id}</p>
         <button class="btn btn-danger delete-btn" data-id="${p._id}">Delete</button>
@@ -69,7 +68,7 @@ productForm.addEventListener('submit', (event) => {
 
     if (action === 'add') {
 
-        if (!productData.title || !productData.description || !productData.price || !productData.thumbnail || !productData.code || !productData.stock || !productData.status || !productData.category) {
+        if (!productData.titulo || !productData.descripcion || !productData.precio || !productData.img || !productData.code || !productData.stock || !productData.status) {
             return alert('Please fill in all fields.');
         }
         if (isNaN(Number(productData.code)) || isNaN(Number(productData.stock))) {

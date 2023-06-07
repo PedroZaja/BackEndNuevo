@@ -1,23 +1,23 @@
-<link rel="stylesheet" href="/css/styles.css">
-<header>
+<div class="container mt-5 w-50">
+    <h2>Restore Password</h2>
+    <br>
     <div style="display: none;" id="token">{{token}}</div>
-    <div></div>
-    <h1>Recuperar contraseña</h1>
-    <div></div>
-</header>
-<main>
+
     {{#if hasExpired}}
-        <h1>El link ha expirado</h1>
-        <h3>Ve a <a href="/recover">recuperar contraseña</a> para crear otro link</h3>
+        <h2>The link has expired</h2>
+        <h3>Go to<a href="/users/recover">recover password</a> to generate a new link.</h3>
     {{else}}
-        <form id="recoverForm" class="form">
-            <div class="formOrder">
-                <label>Nueva contraseña</label>
-                <input type="password" name="password" id="passwordInput">
-            </div>
-            <button type="submit" class="submit">Enviar</button>
-        </form>
+        <div class="container mt-5 w-50">
+            <form id="recoverForm" class="form">
+                <div class="mb-3 w-50">
+                    <label for="passwordInput" class="form-label">New Password</label>
+                    <input type="password" class="form-control" name="password" id="passwordInput">
+                </div>
+                <button type="submit" class="btn btn-primary">Send</button>
+            </form>
+            <br>
+            <p>Not registered? <a href="/users/register">Sign up here</a></p>
+        </div>
     {{/if}}
-</main>
-<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</div>
 <script src="/js/recoverLanding.js"></script>

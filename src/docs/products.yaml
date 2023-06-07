@@ -1,0 +1,10 @@
+paths: 
+  /api/products/:
+   get:
+     summary: Obtiene todos los Productos cargados en la base de datos!
+     tags: 
+       -Product
+       -Productos
+      responses:
+      "200":
+        description: Los productos mostraron satsfactoriamente!

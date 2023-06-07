@@ -17,18 +17,16 @@ form.addEventListener('submit', event => {
         headers: {
             'Content-type': 'application/json'
         }
-    }).then(result => result.json()).then(json => {
-        console.log(json);
-        if (json.status == "Ok") {
-            Swal.fire({
-                icon: 'success',
-                title: 'Contraseña reestablecida correctamente'
-            })
+    }).then(result => {
+        if (result.status === 200) {
+            return result.json();
         } else {
-            Swal.fire({
-                icon: 'error',
-                title: json.message
-            })
+            alert(`Error restoring password`)
+            throw new Error('Error restoring password');
         }
-    });
+    }).then(
+        json => {
+            console.log(json);
+            alert("The password has been restored succesfully");
+        })
 });

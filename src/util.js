@@ -17,8 +17,8 @@ export const isValidPassword = (user, password) => {
 }
 
 //JSON Web Tokens JWT functinos:
-export const generateJwtToken = (user) => {
-    return jwt.sign({user}, config.jwtPrivateKey, {expiresIn: '20m'});
+export const generateJwtToken = (user, expiresIn = '20m') => {
+    return jwt.sign({user}, config.jwtPrivateKey, {expiresIn: expiresIn});
 };
 
 // Middleware for public routes

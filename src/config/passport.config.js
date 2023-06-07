@@ -21,6 +21,9 @@ const initializePassport = () => {
     passport.use('register', new LocalStrategy(
         { passReqToCallback: true, usernameField: 'email' }, async (req, username, password, done) => {
 
+            console.log(username);
+            console.log(password);
+
             const { first_name, last_name, age } = req.body;
             req.logger.info(`Registering user:  ${JSON.stringify(req.body)}`);
             
