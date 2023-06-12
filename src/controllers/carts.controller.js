@@ -1,6 +1,8 @@
 import CartsService from "../services/carts.service.js";
+import ProductsService from "../services/products.service.js";
 
 const cartService = new CartsService;
+const productService = new ProductsService();
 
 export const getCart = async (req, res) => {
     try {
@@ -35,6 +37,16 @@ export const updateProductQuantityToCart = async (req, res, next) => {
         const cartId = req.params.cid;
         const productId = req.params.pid;
         const quantity = req.body.quantity;
+
+        const productToAdd = await productService.getProductById(productId)
+
+
+        if (!productToAdd) {
+            return res.status(401).json({ status: "error", message: "The product doesn't exist" });
+        }
+        if (productToAdd.owner === req.user.email) {
+            throw new Error('You cant add your products to your own cart');
+        }
 
         const cart = await cartService.updateQuantity(cartId, productId, quantity);
 
@@ -78,8 +90,8 @@ export const emptyCart = async (req, res) => {
 
 export const purchaseCart = async (req, res) => {
     try{
-        console.log("REQ.USER");
-        console.log(req.user);
+
+        req.logger.info(`User: ${req.user} wants to finalize his purchase`);
         const cartId = req.params.cid;
 
         const cart = await cartService.purchaseCart(cartId, req.user);
@@ -89,20 +101,3 @@ export const purchaseCart = async (req, res) => {
         res.status(400).json({error: "Can't complete purchase "+error.message})
     }        
 }
-
-/* export const updateCart = async (req, res) => {
-    try {
-
-        const cartId = req.params.cid;
-        const newProducts = req.body.products;
-
-        const cartUpdate = await cartService.updateCart(cartId, newProducts);
-
-        res.status(201).json(cartUpdate);
-
-    } catch (error) {
-        console.error(error);
-        res.status(400).json({error: "Error updating products in the cart. "+error.message});
-    }
-    
-} */

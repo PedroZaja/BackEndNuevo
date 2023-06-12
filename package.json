@@ -45,5 +45,8 @@
   "bugs": {
     "url": "https://github.com/PedroZaja/Proyecto-Back-End/issues"
   },
-  "homepage": "https://github.com/PedroZaja/Proyecto-Back-End#readme"
+  "homepage": "https://github.com/PedroZaja/Proyecto-Back-End#readme",
+  "devDependencies": {
+    "mocha": "^10.2.0"
+  }
 }

@@ -1,22 +1,23 @@
 <div class="container mt-5 w-50">
-    <h2>Restore Password</h2>
+    <h2>Recuperar contraseña</h2>
     <br>
     <div style="display: none;" id="token">{{token}}</div>
 
     {{#if hasExpired}}
-        <h2>The link has expired</h2>
-        <h3>Go to<a href="/users/recover">recover password</a> to generate a new link.</h3>
+        <h2>El link Expiro!</h2>
+        <h3>Vuelve a <a href="/users/recover"> recuperar contraseña</a> para generar un nuevo link</h3>
     {{else}}
         <div class="container mt-5 w-50">
             <form id="recoverForm" class="form">
                 <div class="mb-3 w-50">
-                    <label for="passwordInput" class="form-label">New Password</label>
-                    <input type="password" class="form-control" name="password" id="passwordInput">
+                    <label for="passwordInput" class="form-label">Nueva contraseña</label>
+                    <input type="password" class="form-control" name="password" id="passwordInput" required>
                 </div>
-                <button type="submit" class="btn btn-primary">Send</button>
+                <button type="submit" class="btn btn-primary">Enviar</button>
             </form>
             <br>
-            <p>Not registered? <a href="/users/register">Sign up here</a></p>
+            <p>No tenes cuenta? <a href="/users/register">Registrate!</a></p>
+            <p><a href="/users/login">Inicia sesion</a></p>
         </div>
     {{/if}}
 </div>

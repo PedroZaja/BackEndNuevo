@@ -11,7 +11,7 @@ form.addEventListener('submit', event => {
         password
     }
 
-    fetch('/api/session/restorePass', {
+    fetch('/api/sessions/restorePass', {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
@@ -21,12 +21,16 @@ form.addEventListener('submit', event => {
         if (result.status === 200) {
             return result.json();
         } else {
-            alert(`Error restoring password`)
-            throw new Error('Error restoring password');
+            return result.json().then(json => {
+                throw new Error(json.error);
+            });
         }
     }).then(
         json => {
             console.log(json);
-            alert("The password has been restored succesfully");
-        })
+            alert(`Status: ${json.status}\nMessage: ${json.message}`);
+        }).catch(error => {
+            console.error(error);
+            alert(`Error restoring password: ${error.message}`);
+        });
 });

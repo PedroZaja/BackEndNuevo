@@ -24,10 +24,6 @@ export default class CartsService {
 
     async updateQuantity(cartId, productId, quantity) {
 
-        // if (!cartId) throw new Error('Cart ID is required.');
-        // if (!productId) throw new Error('Product ID is required.');
-
-
         if (!cartId || !productId || productId === "null" || productId === "undefined") {
             throw CustomError.createError({
                 statusCode: 401,

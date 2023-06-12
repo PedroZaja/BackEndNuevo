@@ -25,7 +25,7 @@ export default class ProductsService {
                 filters.status = status;
             }
         }
-
+        
         options.lean = true;
         options.limit = limit;
         options.page = page;
@@ -47,28 +47,20 @@ export default class ProductsService {
 
     async createProduct(parameters) {
 
-        const { titulo, descripcion, code, precio, stock, img } = parameters;
+        const {title, description, code, price, stock, category, thumbnails } = parameters;
 
-        // if (!title) throw new Error('Title is required');
-        // if (!description) throw new Error('Description is required');
-        // if (!code) throw new Error('Code is required');
-        // if (!price) throw new Error('Price is required');
-        // if (!stock) throw new Error('Stock is required');
-        // if (!category) throw new Error('Category is required');
-
-        if (!titulo || !descripcion || !code || !precio || !stock) {
+        if (!title || !description || !code || !price || !stock || !category) {
             throw CustomError.createError({
                 statusCode: 401,
                 code: 3,
                 message: "Some product info is missing",
-                cause: createProductErrorInfo({ titulo, descripcion, code, precio, stock })
+                cause: createProductErrorInfo({title, description, code, price, stock, category})
             })
         }
 
-        const product = await productDao.createProduct({ titulo, descripcion, code, price, stock, img });
-
-        console.log("Product Added: ");
-        console.log(product);
+        const product = await productDao.createProduct({ title, description, code, price, stock, category, thumbnails });
+        
+        req.logger.info(`Product Added: ${product}`);
 
         return product;
     }

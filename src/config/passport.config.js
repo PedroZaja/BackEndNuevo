@@ -103,8 +103,8 @@ const initializePassport = () => {
             try {
 
                 return done(null, jwt_payload.user);
-
             } catch (error) {
+                
                 req.logger.error(`Error in JWT strategy  ${error}`);
                 return done(error);
             }

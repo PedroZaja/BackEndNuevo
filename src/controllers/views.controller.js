@@ -18,7 +18,7 @@ export const getProducts = async (req, res) => {
     try {
         const products = await productsService.getProducts(req.query);
 
-        let user, admin = null;
+        let user, admin, premium = null;
 
         if (req.user) {
             user = req.user;
@@ -26,11 +26,15 @@ export const getProducts = async (req, res) => {
         if (req.user.role === "admin") {
             admin = true;
         }
+        if (req.user.role === "premium") {
+            premium = true;
+        }
 
         res.render("products", {
             products,
             user,
-            admin
+            admin,
+            premium
         });
 
     } catch (error) {

@@ -1,13 +1,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Productos</title>
+  <title>Products</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/css/products.css">
 </head>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">Mi tienda!</a>
+    <a class="navbar-brand" href="#">Mi Tienda!</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -18,7 +18,7 @@
           <a class="nav-link active" aria-current="page" href="#">Productos</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/cart">Cart</a>
+          <a class="nav-link" href="/cart">Carrito</a>
         </li>
       </ul>
       <ul class="navbar-nav d-flex align-items-center ms-auto">
@@ -30,13 +30,18 @@
           <span class="text-dark">Email: {{user.email}}</span>
         </li>
         <li class="nav-item me-3 d-flex align-items-center">
-          <span class="text-dark">Tu edad: {{user.age}}</span>
+          <span class="text-dark">Edad {{user.age}}</span>
         </li>
         {{#if admin}}
         <li class="nav-item me-3 d-flex align-items-center">
           <span class="badge bg-danger">ADMIN</span>
         </li>
         {{/if}}
+        {{#if premium}}
+        <li class="nav-item me-3 d-flex align-items-center">
+          <span class="badge bg-warning">PREMIUM</span>
+        </li>
+        {{/if}}        
         <li class="nav-item">
           <form method="POST" action="/api/sessions/logout">
             <button class="btn btn-primary btn-sm nav-link" type="submit">Cerrar sesion</button>
@@ -56,10 +61,10 @@
     <div class="col-md-10">
       <h1 class="text-center py-5 text-primary">Productos</h1>
       <div class="row" id="product-list">
-        {{#each products}}
+        {{#each products.docs}}
         <div class="col-md-4 mb-4">
           <div class="card">
-            <img src="{{this.img}}" class="card-img-top" alt="{{this.title}}">
+            <img src="{{this.img}}" class="card-img-top" alt="{{this.titulo}}">
             <div class="card-body">
               <h5 class="card-title">{{this.titulo}}</h5>
               <p class="card-text">{{this.descripcion}}</p>
@@ -71,25 +76,47 @@
         </div>
         {{/each}}
       </div>
-      {{#if totalPages}}
+      {{#if products.totalPages}}
       <div>
-        <p>Pagina {{currentPage}} de {{totalPages}}</p>
+        <p>Pagina {{products.currentPage}} of {{products.totalPages}}</p>
         <div>
-          {{#if hasPrevPage}}
-          <a href="/products?page={{prevPage}}">&lt; Anterior</a>
+          {{#if products.hasPrevPage}}
+          <a href="#" onclick="goToPage('{{products.prevPage}}', event)">&lt; Anterior</a>
           {{/if}}
-          {{#if hasNextPage}}
-          <a href="/products?page={{nextPage}}">Siguente &gt;</a>
+          {{#if products.hasNextPage}}
+          <a href="#" onclick="goToPage('{{products.nextPage}}', event)">Siguiente &gt;</a>
           {{/if}}
         </div>
       </div>
       {{else}}
-      <p>No se encontraron productos!</p>
+      <p>No se encontraron productos</p>
       {{/if}}
     </div>
   </div>
 </div>
 <script>
+
+  function goToPage(page, event) {
+    event.preventDefault();
+
+    const currentUrl = window.location.href;
+    const currentSearchParams = new URLSearchParams(window.location.search);
+    const queryParams = new URLSearchParams();
+
+    currentSearchParams.forEach((value, key) => {
+      queryParams.set(key, value);
+    });
+
+    if (page) {
+      queryParams.set('page', page);
+    }
+
+    const baseUrl = currentUrl.split('?')[0];
+    const newUrl = baseUrl + '?' + queryParams.toString();
+
+    window.location.href = newUrl;
+  }
+
   function addToCart(productId) {
     fetch(`/api/carts/641bdada984cb1cc66e9fc8f/product/${productId}`, {
       method: 'POST',
