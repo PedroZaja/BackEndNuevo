@@ -43,7 +43,7 @@ export default class CartDao {
     }
 
     async getPaginatedCart(cartId) {
-        const cart = await cartsModel.findOneAndReplace({_id: cartId}, { lean: true });
+        const cart = await cartsModel.findById({_id: cartId}, { lean: true });
         return cart;
     }
 

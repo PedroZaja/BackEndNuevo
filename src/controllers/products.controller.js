@@ -49,19 +49,19 @@ export const updateProduct = async (req, res) => {
     try {
 
         const productId = req.params.pid;
-        const productFields = req.body;
+        const newProduct = req.body;
 
         const existProduct = await productsService.getProductById(productId)
+
         if (!existProduct) {
             return res.status(401).json({ status: "error", message: "The product doesn't exist" });
         }
 
-        if (req.user.role === "premium") {
-            if (req.user.email != existProduct.owner)
+        if (req.user.role === "premium" && req.user.email !== existProduct.owner) {
             return res.status(403).json({ status: "error", message: "Product Owner or Admin role required" });
         }
 
-        let productUpdated = await productsService.updateProduct(productId, productFields);
+        let productUpdated = await productsService.updateProduct(productId, newProduct);
 
         res.status(200).json(productUpdated);
 
@@ -79,12 +79,12 @@ export const deleteProduct = async (req, res) => {
         const productId = req.params.pid;
 
         const existProduct = await productsService.getProductById(productId)
+
         if (!existProduct) {
             return res.status(401).json({ status: "error", message: "The product doesn't exist" });
         }
 
-        if (req.user.role === "premium") {
-            if (req.user.email != existProduct.owner)
+        if (req.user.role === "premium" && req.user.email !== existProduct.owner) {
             return res.status(403).json({ status: "error", message: "Product Owner or Admin role required" });
         }
 

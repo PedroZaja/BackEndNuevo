@@ -26,7 +26,7 @@ const initializePassport = () => {
 
             const { first_name, last_name, age } = req.body;
             req.logger.info(`Registering user:  ${JSON.stringify(req.body)}`);
-            
+
             try {
 
                 const userExists = await userManager.findOne(username);
@@ -96,16 +96,21 @@ const initializePassport = () => {
     passport.use('jwt', new JwtStrategy(
         {
             jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
-            secretOrKey: config.jwtPrivateKey
-
-        }, async (jwt_payload, done) => {
-
+            secretOrKey: config.jwtPrivateKey,
+            passReqToCallback: true
+        },
+        async (req, jwt_payload, done) => {
             try {
-
                 return done(null, jwt_payload.user);
+
             } catch (error) {
-                
-                req.logger.error(`Error in JWT strategy  ${error}`);
+                if (error.name == 'TokenExpiredError') {
+                    req.logger.warn('Token expired:', error.message);
+
+                } else {
+                    req.logger.error('Error in JWT strategy:', error);
+                }
+
                 return done(error);
             }
         }
@@ -126,7 +131,7 @@ const initializePassport = () => {
                 const user = await userManager.findOne({
                     email: profile._json.email
                 });
-                
+
                 req.logger.info(`User finded for login: ${user}`);
 
                 if (!user) {
@@ -178,7 +183,8 @@ const cookieExtractor = req => {
     let token = null;
 
     if (req && req.cookies) { //Validate that the request and cookies exist.
-        req.logger.info(`Token from Cookie: ${req.cookies}`);
+
+        req.logger.info(`Token from Cookie: ${JSON.stringify(req.cookies)}`);
         token = req.cookies['jwtCookieToken']; //-> Keep in mind this name is that of the Cookie.
     }
     return token;

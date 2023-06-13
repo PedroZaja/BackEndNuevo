@@ -1,3 +1,4 @@
+import { customLogger } from "../config/logger.js";
 import ProductDao from "../dao/db/products.dao.js";
 import CustomError from "../middlewares/errors/CustomError.js"
 import { updateQuantityInCartErrorInfo, createProductErrorInfo } from "../middlewares/errors/messages/error.messages.js";
@@ -47,7 +48,7 @@ export default class ProductsService {
 
     async createProduct(parameters) {
 
-        const {title, description, code, price, stock, category, thumbnails } = parameters;
+        const {title, description, code, price, stock, category, thumbnails, owner } = parameters;
 
         if (!title || !description || !code || !price || !stock || !category) {
             throw CustomError.createError({
@@ -58,9 +59,9 @@ export default class ProductsService {
             })
         }
 
-        const product = await productDao.createProduct({ title, description, code, price, stock, category, thumbnails });
+        const product = await productDao.createProduct({ title, description, code, price, stock, category, thumbnails, owner });
         
-        req.logger.info(`Product Added: ${product}`);
+        customLogger.info(`Product Added: ${product}`);
 
         return product;
     }

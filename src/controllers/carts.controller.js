@@ -40,7 +40,6 @@ export const updateProductQuantityToCart = async (req, res, next) => {
 
         const productToAdd = await productService.getProductById(productId)
 
-
         if (!productToAdd) {
             return res.status(401).json({ status: "error", message: "The product doesn't exist" });
         }

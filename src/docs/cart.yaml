@@ -1,0 +1,10 @@
+paths: 
+  /api/cart/:
+   get:
+     summary: Muestra los productos agregados al carrito
+     tags: 
+       -Cart
+       -Carrito
+      responses:
+      "200":
+        description: Los productos mostraron satisfactoriamente!

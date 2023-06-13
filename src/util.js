@@ -45,14 +45,15 @@ export const passportCall = (strategy) => {
 
         req.logger.info(`Calling strategy: ${strategy}`);
 
-        passport.authenticate(strategy, function (err, user, info) {
-            
-            if (err) return next(err);
+        passport.authenticate(strategy, function (error, user, info) {
+
+            if (error) return next(error);
             if (!user) {
+                req.logger.warn('Token expired or invalid');
                 return res.status(401).send({error: info.messages?info.messages:info.toString()});
             }
 
-            req.logger.info(`User obtained from the strategy: ${user}`);
+            req.logger.info(`User obtained from the strategy: ${JSON.stringify(user)}`);
 
             req.user = user;
             next();

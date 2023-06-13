@@ -21,7 +21,15 @@ export default class UserManager {
     };
 
     async updateUser(userId, userToReplace) {
-        const result = await userModel.updateOne({ _id: userId }, userToReplace);
+        const filter = {email: userId}
+        const update = { $set: userToReplace };
+        const result = await userModel.updateOne(filter, update);
         return result;
     }
+
+    async findById(id) {
+
+        const result = await userModel.findById({_id: id});
+        return result;
+    };
 }

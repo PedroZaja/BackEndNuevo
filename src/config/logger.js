@@ -13,7 +13,7 @@ const customLevelsOptions = {
     },
     colors: {
         fatal: 'red',
-        error: 'orange',
+        error: 'magenta',
         warn: 'yellow',
         info: 'blue',
         http: 'cyan',
@@ -69,6 +69,13 @@ export const addLogger = (req, res, next) => {
         req.logger = devLogger;
     }
     req.logger.info(`${req.method} in ${req.url} - at ${new Date().toLocaleDateString()} - ${new Date().toLocaleTimeString()}`);
+
+    res.on('finish', () => {
+        if (res.statusCode >= 400) {
+            req.logger.warn(`Error ${res.statusCode}: ${res.statusMessage}`);
+        }
+    });
+
     next();
 };
 

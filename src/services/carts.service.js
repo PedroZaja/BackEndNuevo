@@ -3,6 +3,7 @@ import ProductsService from "./products.service.js";
 import TicketService from "./tickets.service.js";
 import CustomError from "../middlewares/errors/CustomError.js"
 import { updateQuantityInCartErrorInfo, generateErrorInfo } from "../middlewares/errors/messages/error.messages.js";
+import { customLogger } from "../config/logger.js";
 
 const cartsDao = new CartDao();
 const productService = new ProductsService();
@@ -39,7 +40,7 @@ export default class CartsService {
         }
 
         const productInCart = await cartsDao.findProduct(cartId, productId);
-        req.logger.debug(`Product to update in cart ${productInCart}`);
+        customLogger.debug(`Product to update in cart ${productInCart}`);
 
         if (!productInCart) {
 
@@ -70,7 +71,7 @@ export default class CartsService {
     }
 
     async purchaseCart(cartId, user) {
-        req.logger.info(`User ${user} wants to finalize his purchase`);
+        customLogger.info(`User ${user} wants to finalize his purchase`);
 
         if (!cartId) throw new Error('Cart ID is required.');
 

@@ -28,7 +28,8 @@ export const login = async (req, res) => {
         const user = req.user;
 
         const tokenUser = {
-            name: `${user.first_name} ${user.last_name}`,
+            first_name: user.first_name,
+            last_name: user.last_name,
             email: user.email,
             age: user.age,
             role: user.role
@@ -127,6 +128,7 @@ export const restorePass = async (req, res, next) => {
     } catch (error) {
 
         if (error.name == 'TokenExpiredError') {
+            req.logger.warn('Token has expired.')
             return res.status(401).json({ error: 'Token has expired.' });
         }
 
