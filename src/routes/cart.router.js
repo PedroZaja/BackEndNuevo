@@ -20,7 +20,7 @@ const simulateUserMiddleware = (req, res, next) => {
 
 router.get('/:cid', getCart);
 router.post('/', createCart);
-router.put('/:cid/product/:pid',simulateUserMiddleware, updateProductQuantityToCart);
+router.put('/:cid/products/:pid',simulateUserMiddleware, updateProductQuantityToCart);
 router.delete('/:cid/products/:pid', deleteProductFromCart);
 router.delete('/:cid', emptyCart);
 router.get('/:cid/purchase', simulateUserMiddleware, purchaseCart);
