@@ -37,7 +37,7 @@ export const createProduct = async (req, res, next) => {
         }
         let productCreated = await productsService.createProduct(newProduct);
 
-        res.status(200).json(productCreated);
+        res.status(201).json(productCreated);
 
     } catch (error) {
         next(error);

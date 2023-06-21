@@ -10,7 +10,7 @@ const simulateUserMiddleware = (req, res, next) => {
         first_name: 'Pedro',
         last_name: 'Zaja',
         email: 'pedrodavid21@gmail.com',
-        age: 25,
+        age: 50,
         role: 'premium',
         cart: "648813092e1f7c47f5418791"
     };

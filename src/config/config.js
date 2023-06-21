@@ -14,7 +14,7 @@ console.log("Mode Option: ", program.opts().mode);
 const environment = program.opts().mode;
 
 dotenv.config({
-    path: environment==="production"?"./src/config/.env":"./src/config/.env"
+    path: environment==="production"?"./src/config/.env": environment === 'test'?'./src/config/.env': "./src/config/.env"
 });
 
 

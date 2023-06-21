@@ -25,7 +25,7 @@ import productsRouter from "./routes/products.router.js";
 import cartRouter from "./routes/cart.router.js";
 import viewsRouter from './routes/views.router.js';
 import usersViewsRouter from './routes/user.views.router.js';
-import sessionsRouter from './routes/auth.router.js';
+import sessionsRouter from './routes/session.router.js';
 import githubLoginRouter from './routes/github-login.views.router.js';
 import ticketsRouter from './routes/tickets.router.js'
 import emailRouter from './routes/email.router.js';
@@ -40,8 +40,8 @@ const swaggerOpts = {
     definition: {
         openapi: "3.0.1",
         info: {
-            title: "Documentacion Back End!",
-            description: "Api docs with swagger",
+            title: "Proyecto Back End!",
+            description: "Api docs",
             version: "1.0.0"
         }
     },
@@ -107,7 +107,7 @@ app.use('/loggerTest', logRouter)
 app.use(errorHandler);
 
 const httpServer = app.listen(config.port, () => {
-    console.log(`Servidor activo en el puerto: ${config.port}`);
+    customLogger.http(`Servidor Express escuchando en el puerto: ${config.port}`);
 })
 // Initialize websocket Server
 setupWebSocket(httpServer);
@@ -116,9 +116,9 @@ setupWebSocket(httpServer);
 const connectMongoDB = async () => {
     try {
         await mongoose.connect(config.mongoUrl);
-        console.log("Coneccion a la base de datos exitosa!");
+        customLogger.info("Conexion a la base de datos establecida!");
     } catch (error) {
-        console.log("Error al conectarse a la base de datos! "+error);
+        customLogger.fatal(`Error al conectar a la base de datos. ${error}`);
     }
 
 }
