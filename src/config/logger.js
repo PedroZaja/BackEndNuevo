@@ -62,7 +62,7 @@ const prodLogger = winston.createLogger({
 });
 
 //Declare a middleware:
-export const addLogger = (req, res, next) => {
+const addLogger = (req, res, next) => {
     if (config.environment === 'production') {
         req.logger = prodLogger;
     } else {
@@ -79,10 +79,12 @@ export const addLogger = (req, res, next) => {
     next();
 };
 
-export let customLogger;
+let customLogger;
 
 if (config.environment === 'production') {
     customLogger = prodLogger;
 } else {
     customLogger = devLogger;
 };
+
+export { customLogger, addLogger }
