@@ -1,10 +1,23 @@
-paths: 
+paths:
   /api/cart/:
-   get:
-     summary: Muestra los productos agregados al carrito
-     tags: 
-       -Cart
-       -Carrito
-      responses:
-      "200":
-        description: Los productos mostraron satisfactoriamente!
+    get: 
+      summary: Visita el carrito armado
+        - student
+        - estudiantes
+      responses: 
+        "200":
+          description: Se muestran el carrito
+          content: 
+            application/json:
+              schema: 
+                type: array
+                items:
+                  $ref: "#/components/schemas/carrito"
+        "500":
+          description: No hay acceso.
+          content: 
+            application/json:
+              schema: 
+                type: object
+                items:
+                  $ref: "#/components/schemas/Error"
