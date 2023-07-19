@@ -25,15 +25,15 @@ const initializePassport = () => {
             console.log(password);
 
             const { first_name, last_name, age } = req.body;
-            req.logger.info(`Registering user:  ${JSON.stringify(req.body)}`);
+            req.logger.info(`Registrando usuario:  ${JSON.stringify(req.body)}`);
 
             try {
 
                 const userExists = await userManager.findOne(username);
 
                 if (userExists) {
-                    req.logger.warn(`User already exist. username: ${username}`);
-                    return done(null, false, { messages: 'User already exist.' });
+                    req.logger.warn(`El usuario ya existe: ${username}`);
+                    return done(null, false, { messages: 'Usuario esistente!' });
                 }
 
                 const user = new UserDTO({
@@ -50,10 +50,10 @@ const initializePassport = () => {
 
                 const result = await userManager.createUser(user);
 
-                return done(null, result, { messages: `User created successfully, ID: ${result.id}` });
+                return done(null, result, { messages: `Usuario creado, ID: ${result.id}` });
 
             } catch (error) {
-                return done("Error getting user: " + error)
+                return done("Error obteniendo el usuario: " + error)
             }
         }
     ))
@@ -66,25 +66,24 @@ const initializePassport = () => {
                 const user = await userManager.findOne(username);
 
                 if (!user) {
-                    req.logger.warn(`User doesn't exists with username: ${username}`);
-                    return done(null, false, { messages: "Invalid credentials." });
+                    req.logger.warn(`El usuario no existe: ${username}`);
+                    return done(null, false, { messages: "Informacion erronea!" });
                 }
 
                 if (!isValidPassword(user, password)) {
-                    req.logger.warn(`Invalid credentials for user: ${username}`);
-                    return done(null, false, { messages: "Invalid credentials." });
+                    req.logger.warn(`Credenciales erroneas: ${username}`);
+                    return done(null, false, { messages: "Informacion no valida!" });
                 }
 
                 if (!user.cart) {
-                    req.logger.info(`Creating Cart for  user: ${username}`);
+                    req.logger.info(`Creando carrito para el usuario: ${username}`);
                     const cart = await cartsService.createCart();
 
                     user.cart = cart._id;
                     await user.save();
                 }
 
-
-                return done(null, user, { messages: "Login Success." });
+                return done(null, user, { messages: "Inicio exitoso." });
 
             } catch (error) {
                 return done(error);
@@ -92,7 +91,6 @@ const initializePassport = () => {
         })
     );
 
-    //Strategy to get JWT Token by Cookie:
     passport.use('jwt', new JwtStrategy(
         {
             jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
@@ -174,18 +172,14 @@ const initializePassport = () => {
     });
 }
 
-/**
-  * Utility method in case you need to extract cookies with Passport
-  * @param {*} req the request object of some router.
-  * @returns The token extracted from a Cookie
-  */
+
 const cookieExtractor = req => {
     let token = null;
 
-    if (req && req.cookies) { //Validate that the request and cookies exist.
+    if (req && req.cookies) {
 
         req.logger.info(`Token from Cookie: ${JSON.stringify(req.cookies)}`);
-        token = req.cookies['jwtCookieToken']; //-> Keep in mind this name is that of the Cookie.
+        token = req.cookies['jwtCookieToken']; 
     }
     return token;
 };

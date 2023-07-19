@@ -15,7 +15,6 @@ describe("Pruebas!", () => {
     describe("Session API Test", () => {
 
         before(async function () {
-            // this.cookie;
             this.mockUser = {
                 email: "algunmail@gmail.com",
                 password: "algunapass",
@@ -25,11 +24,6 @@ describe("Pruebas!", () => {
                 role: "admin"
             }
         });
-
-        /*         beforeEach(function(){
-                    this.timeout(4000);
-                    mongoose.connection.collections.users.drop();
-                }); */
 
         it("Register user - POST /api/sessions/register", async function () {
             const { statusCode, ok, _body } = await requester.post("/api/sessions/register").send(this.mockUser);

@@ -10,7 +10,6 @@ class CartManager {
         this.nextId = 0;
     }
 
-    //Adds a new empty cart array and saves it to the JSON file.
     async addCart() {
         try {
 
@@ -19,10 +18,8 @@ class CartManager {
                 products: []
             }
 
-            // Read the existing carts
             this.carts = await this.readCarts();
 
-            //Check for id repeated
             this.nextId++;
             while (this.carts.some(p => p.id === this.nextId)) {
                 this.nextId++;
@@ -52,7 +49,6 @@ class CartManager {
 
             const productManager = new ProductManager();
 
-            // Check if the product exist
             const checkProduct = await productManager.getProductById(product);
             if (!checkProduct.success) {
                 return {
@@ -61,7 +57,6 @@ class CartManager {
                   };
             }
 
-            // Read the existing carts
             this.carts = await this.readCarts();
             const cart = this.carts.find(c => c.id === cartId);
 
@@ -71,14 +66,13 @@ class CartManager {
                     message: "Cart with the provided id doesn't exist"
                 };
             } else {
-                // Check if product already exists in cart
+                
                 const existingProduct = cart.products.find(p => p.product === product);
 
                 if (existingProduct) {
-                    // Add 1
+                   
                     existingProduct.quantity++;
 
-                    // Save to JSON
                     await this.saveCarts();
 
                     return {
@@ -87,7 +81,7 @@ class CartManager {
                     };
 
                 } else {
-                    // Add new product to cart
+                    
                     cart.products.push({ product, quantity: 1 });
                     await this.saveCarts();
                     return {

@@ -1,6 +1,5 @@
 const socket = io();
 
-//Update and render the products with websocket
 socket.on('update-products', (data) => {
 
     const products = document.getElementById('products');
@@ -21,7 +20,6 @@ socket.on('update-products', (data) => {
 
     products.innerHTML = renderedProducts;
 
-    // Delete an existing product
     const deleteButtons = document.querySelectorAll('.delete-btn');
     deleteButtons.forEach(button => {
         button.addEventListener('click', (event) => {
@@ -42,7 +40,6 @@ socket.on('update-products', (data) => {
     });
 });
 
-//Get the data from the Form and generate HTTP Request to server
 const productForm = document.getElementById('product-form');
 const actionSelect = document.getElementById('operation');
 const idField = document.getElementById('id-field');

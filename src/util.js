@@ -16,12 +16,10 @@ export const isValidPassword = (user, password) => {
     return bcrypt.compareSync(password, user.password);
 }
 
-//JSON Web Tokens JWT functinos:
 export const generateJwtToken = (user, expiresIn = '20m') => {
     return jwt.sign({user}, config.jwtPrivateKey, {expiresIn: expiresIn});
 };
 
-// Middleware for public routes
 export const publicRouteMiddleware = (req, res, next) => {
     if (req.user) {
         req.logger.info(`Already logged in, redirect`);
@@ -30,7 +28,6 @@ export const publicRouteMiddleware = (req, res, next) => {
     next();
 };
 
-// Middleware for private routes
 export const privateRouteMiddleware = (req, res, next) => {
     if (!req.user) {
         req.logger.info(`Redirect to log in`);
@@ -39,7 +36,6 @@ export const privateRouteMiddleware = (req, res, next) => {
     next();
 };
 
-//Useful for more controlled calls of the Passport strategy.
 export const passportCall = (strategy) => {
     return async (req, res, next) => {
 
@@ -61,7 +57,6 @@ export const passportCall = (strategy) => {
         })(req, res, next);
     }
 };
-
 
 export const generateMockProduct = () => {
     let product = {

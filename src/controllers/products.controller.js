@@ -10,7 +10,7 @@ export const getProducts = async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Error loading the products. " + error.message });
+        res.status(500).json({ error: "Error cargando los productos. " + error.message });
     }
 
 }
@@ -24,7 +24,7 @@ export const getProductById = async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        res.status(400).json({ error: "Error searching the product. " + error.message });
+        res.status(400).json({ error: "Error buscando los productos. " + error.message });
     }
 
 }
@@ -54,11 +54,11 @@ export const updateProduct = async (req, res) => {
         const existProduct = await productsService.getProductById(productId)
 
         if (!existProduct) {
-            return res.status(401).json({ status: "error", message: "The product doesn't exist" });
+            return res.status(401).json({ status: "error", message: "El producto no existe" });
         }
 
         if (req.user.role === "premium" && req.user.email !== existProduct.owner) {
-            return res.status(403).json({ status: "error", message: "Product Owner or Admin role required" });
+            return res.status(403).json({ status: "error", message: "Se requiere rol Owner o Admin!" });
         }
 
         let productUpdated = await productsService.updateProduct(productId, newProduct);
@@ -67,7 +67,7 @@ export const updateProduct = async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        res.status(400).json({ error: "Error updating product. " + error.message });
+        res.status(400).json({ error: "Error actualizando el producto. " + error.message });
     }
 
 }
@@ -81,11 +81,11 @@ export const deleteProduct = async (req, res) => {
         const existProduct = await productsService.getProductById(productId)
 
         if (!existProduct) {
-            return res.status(401).json({ status: "error", message: "The product doesn't exist" });
+            return res.status(401).json({ status: "error", message: "El producto no existe!" });
         }
 
         if (req.user.role === "premium" && req.user.email !== existProduct.owner) {
-            return res.status(403).json({ status: "error", message: "Product Owner or Admin role required" });
+            return res.status(403).json({ status: "error", message: "Se requiere rol Owner o Admin!" });
         }
 
         let productDeleted = await productsService.deleteProduct(productId);
@@ -93,7 +93,7 @@ export const deleteProduct = async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        res.status(400).json({ error: "Error deleting product. " + error.message });
+        res.status(400).json({ error: "Error eliminando el producto. " + error.message });
     }
 
 }

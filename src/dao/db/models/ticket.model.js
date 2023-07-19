@@ -13,8 +13,8 @@ const ticketSchema = new mongoose.Schema({
         type: String,
         unique: true,
         default: function () {
-            const randomNumber = Math.floor(Math.random() * 10000); // Random 4 digit
-            const currentDate = new Date().toISOString().replace(/[-:.TZ]/g, ''); // Date & time w/o special characters
+            const randomNumber = Math.floor(Math.random() * 10000);
+            const currentDate = new Date().toISOString().replace(/[-:.TZ]/g, '');
             return `${currentDate}${randomNumber}`;
         }
     },

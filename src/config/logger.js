@@ -1,7 +1,6 @@
 import winston, { transports } from "winston";
 import config from "./config.js";
 
-//Custom logger options:
 const customLevelsOptions = {
     levels: {
         fatal: 0,
@@ -21,9 +20,8 @@ const customLevelsOptions = {
     }
 };
 
-//Custom Logger:
 const devLogger = winston.createLogger({
-    //Levels:
+    
     levels: customLevelsOptions.levels,
     transports: [
         new winston.transports.Console(
@@ -38,7 +36,6 @@ const devLogger = winston.createLogger({
     ]
 });
 
-//Creating our logger:
 const prodLogger = winston.createLogger({
     levels: customLevelsOptions.levels,
     transports: [
@@ -61,7 +58,6 @@ const prodLogger = winston.createLogger({
     ]
 });
 
-//Declare a middleware:
 const addLogger = (req, res, next) => {
     if (config.environment === 'production') {
         req.logger = prodLogger;

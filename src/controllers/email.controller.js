@@ -14,7 +14,7 @@ transporter.verify(function (error, success) {
     if (error) {
         console.warn(`Transporter verify error:  ${error} `);
     } else {
-        console.info(`Server is ready to take our messages.`);
+        console.info(`El servidor esta ON.`);
     }
 });
 

@@ -9,7 +9,6 @@ class ProductManager {
         this.nextId = 0;
     }
 
-    //Adds a new product to the products array and saves it to the JSON file.
     async createProduct(newProduct) {
         try {
 
@@ -30,7 +29,6 @@ class ProductManager {
                 };
             }
 
-            //Check for id repeated
             this.nextId++;
             while (this.products.some(p => p.id === this.nextId)) {
                 this.nextId++;

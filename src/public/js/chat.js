@@ -1,6 +1,4 @@
-// CommonJS
 const socket = io();
-
 
 const chatBox = document.getElementById('textIn');
 
@@ -26,11 +24,10 @@ Swal.fire({
 
 });
 
-//Parte dos: Guardar mensajes por socketid.
 chatBox.addEventListener('keyup', evt => {
     if (evt.key === "Enter") {
         if (chatBox.value.trim().length > 0) {
-            socket.emit('message', { user: user, message: chatBox.value }); //{user: Juan, message: "Hola"}
+            socket.emit('message', { user: user, message: chatBox.value });
             chatBox.value = ""
         } else {
             Swal.fire({

@@ -7,7 +7,6 @@ export default class CartManager {
         this.carts = cartsModel;
     }
 
-    //Adds a new empty cart array and saves it to the JSON file.
     async addCart() {
         try {
 
@@ -31,13 +30,13 @@ export default class CartManager {
         try {
 
             const productManager = new ProductManager();
-            // Check if the product exist
+           
             const checkProduct = await productManager.getProductById(productId);
 
             if (!checkProduct.success) {
                 return {
                     success: false,
-                    message: `Product with id ${productId} not found.`,
+                    message: `Producto con la ID  ${productId} no encontrado.`,
                 };
             }
 
@@ -46,16 +45,15 @@ export default class CartManager {
             if (!cart) {
                 return {
                     success: false,
-                    message: "Cart with the provided id doesn't exist"
+                    message: "Carrito con la ID del producto no encontrado."
                 };
 
             } else {
-                // Check if product already exists in cart
 
                 let existingProduct = cart.products.find(p => p.productId.equals(productId));
 
                 if (existingProduct) {
-                    // Add 1
+                   
                     existingProduct.quantity++;
                     const result = await cart.save();
 

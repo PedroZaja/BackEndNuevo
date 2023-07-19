@@ -77,7 +77,7 @@ export const createRealTimeProduct = async (req, res) => {
         }
 
     } catch (error) {
-        res.status(500).send({ error: "Error saving product."+error.message });
+        res.status(500).send({ error: "Error guardando los productos."+error.message });
     }
 };
 
@@ -98,7 +98,7 @@ export const updateRealTimeProduct = async (req, res) => {
 
     } catch (error) {
         console.log(error);
-        res.status(500).send({ error: "Error updating product."+error.message });
+        res.status(500).send({ error: "Error actualizando los productos."+error.message });
     }
 };
 
@@ -117,6 +117,6 @@ export const deleteRealTimeProduct = async (req, res) => {
 
     } catch (error) {
         console.log(error);
-        res.status(500).send({ error: "Error deleting product."+error.message });
+        res.status(500).send({ error: "Error eliminando los productos."+error.message });
     }
 };

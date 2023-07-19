@@ -5,7 +5,6 @@ import { transporter } from './email.controller.js';
 import jwt from 'jsonwebtoken';
 import config from '../config/config.js';
 
-
 const userManager = new UserManager();
 
 export const register = async (req, res) => {
@@ -20,7 +19,6 @@ export const register = async (req, res) => {
         res.status(500).json({ error: error.message, message: 'Error registering user' });
     }
 };
-
 
 export const login = async (req, res) => {
     try {
@@ -48,13 +46,11 @@ export const login = async (req, res) => {
     }
 };
 
-
 export const getCurrent = async (req, res) => {
 
     const user = new UserDTO(req.user)
     res.send(user);
 }
-
 
 export const logout = async (req, res) => {
     req.session.destroy();
@@ -83,16 +79,16 @@ export const recoverPass = async (req, res) => {
             subject: 'Restore password from JP Ecommerce',
             html: `
             <div style="display: flex; flex-direction: column; justify-content: center;  align-items: center;">
-            <h1>To reset your password click <a href="http://localhost:8080/users/recoverLanding/${restorePassToken}">here</a></h1>
+            <h1>Para restaurar la contraseña  <a href="http://localhost:8080/users/recoverLanding/${restorePassToken}"> has click aqui!</a></h1>
             </div>`
         });
 
-        req.logger.info(`Password reset token was sent`);
-        res.status(200).json({ status: "success", message: `Password reset token was sent` })
+        req.logger.info(`Se envio un token con la nueva contraseña!`);
+        res.status(200).json({ status: "success", message: `Se envio un token con la nueva contraseña!` })
 
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: error, message: 'Password could not be restored' });
+        res.status(500).json({ error: error, message: 'La contraseña no se pudo restaurar!' });
     }
 }
 
@@ -104,26 +100,26 @@ export const restorePass = async (req, res, next) => {
         const decodedToken = jwt.verify(token, config.jwtPrivateKey);
 
         if (!newPassword || newPassword.trim() === "") {
-            return res.send({ status: "error", message: "The password cannot be empty" });
+            return res.send({ status: "error", message: "La contraseña no puede estar vacia!" });
         }
 
         const email = decodedToken.user;
         const user = await userManager.findOne(email);
-        req.logger.info(`Check if user exist for: ${email}`);
+        req.logger.info(`Verifica que el usuario no exista: ${email}`);
 
 
         if (!user) {
-            return res.status(401).json({ status: 'error', error: "Can't find user." });
+            return res.status(401).json({ status: 'error', error: "No se reconoce el usuario!" });
         }
 
         if (isValidPassword(user, newPassword)) {
-            return res.send({ status: "error", message: "The password cannot be the same" });
+            return res.send({ status: "error", message: "La contraseña no puede ser la misma!" });
         }
 
         const hashedPass = createHash(newPassword)
         const result = await userManager.updateUser({ email: email }, { password: hashedPass });
 
-        return res.status(200).json({ status: "success", message: "The password was changed successfully." });
+        return res.status(200).json({ status: "success", message: "La contraseña se cambio conrrectamente." });
 
     } catch (error) {
 
@@ -136,8 +132,6 @@ export const restorePass = async (req, res, next) => {
     }
 }
 
-
-// export const gitHubLogin = passport.authenticate('github', { scope: ['user:email'] });
 
 export const gitHubCallback = async (req, res) => {
 
@@ -171,17 +165,17 @@ export const swapUserClass = async (req, res, next) => {
         req.logger.debug(`Get user data from: ${email}`);
 
         if (dbUser.role === "admin") {
-            return res.status(403).json({ status: "error", message: "Admin users cant swap roles" });
+            return res.status(403).json({ status: "error", message: "Los Usuarios Administradores no pueden cambiar de roles!" });
 
         } else if (dbUser.role === "user") {
             dbUser.role = "premium";
             const changedRole = await userManager.updateUser(email, dbUser);
-            return res.status(200).json({ status: "success", message: `The Role was changed successfully to ${dbUser.role}.`});
+            return res.status(200).json({ status: "success", message: `El rol se cambio satisfactoriamente a  ${dbUser.role}.`});
 
         } else if (dbUser.role === "premium") {
             dbUser.role = "user";
             const changedRole = await userManager.updateUser(email, dbUser);
-            return res.status(200).json({ status: "success", message: `The Role was changed successfully to ${dbUser.role}.`});
+            return res.status(200).json({ status: "success", message: `El rol se cambio satisfactoriamente a  ${dbUser.role}.`});
 
         }
         

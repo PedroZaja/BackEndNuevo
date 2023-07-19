@@ -7,14 +7,12 @@ const stringRequired = {type: String, required: true};
 const numberRequired = {type: Number, required: true};
 
 const productsSchema = new mongoose.Schema({
-    title: stringRequired,
-    description: stringRequired,
+    titulo: stringRequired,
+    descripcion: stringRequired,
     code: stringRequired,
-    price: numberRequired,
-    status: { type: Boolean, default: true, required: false},
+    precio: numberRequired,
     stock: numberRequired,
-    category: stringRequired,
-    thumbnail: {type: Array},
+    img: {type: Array},
     owner: { type: String, default: 'admin', required: true}
 });
 

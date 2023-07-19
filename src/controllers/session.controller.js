@@ -16,8 +16,8 @@ export const register = async (req, res) => {
             redirectUrl: '/users/login'
         });
     } catch (error) {
-        req.logger.console.warn(`Register user error:  ${error}`);
-        res.status(500).json({ error: error.message, message: 'Error registering user' });
+        req.logger.console.warn(`Error en el registro:  ${error}`);
+        res.status(500).json({ error: error.message, message: 'Error registrando el usuario!' });
     }
 };
 
@@ -44,7 +44,7 @@ export const login = async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: error, message: "Error login user." });
+        res.status(500).json({ error: error, message: "Error en inicio" });
     }
 };
 
@@ -71,7 +71,7 @@ export const recoverPass = async (req, res) => {
         req.logger.info(`Creating a restore pass token for: ${email}`);
 
         if (!user) {
-            return res.status(401).json({ status: 'error', error: "Can't find user." });
+            return res.status(401).json({ status: 'error', error: "No se encuentra el user" });
         }
 
         let restorePassToken = generateJwtToken(email, '1h')
@@ -83,7 +83,7 @@ export const recoverPass = async (req, res) => {
             subject: 'Restaurar contraseña!',
             html: `
             <div style="display: flex; flex-direction: column; justify-content: center;  align-items: center;">
-            <h1>To reset your password click <a href="http://localhost:8080/users/recoverLanding/${restorePassToken}">here</a></h1>
+            <h1>Para restaurar la contraseña, click <a href="http://localhost:8080/users/recoverLanding/${restorePassToken}">aqui!</a></h1>
             </div>`
         });
 

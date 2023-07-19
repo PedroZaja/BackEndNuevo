@@ -48,18 +48,18 @@ export default class ProductsService {
 
     async createProduct(parameters) {
 
-        const {title, description, code, price, stock, category, thumbnails, owner } = parameters;
+        const {titulo, descripcion, code, precio, stock, img, owner } = parameters;
 
-        if (!title || !description || !code || !price || !stock || !category) {
+        if (!titulo || !descripcion || !code || !precio || !stock) {
             throw CustomError.createError({
                 statusCode: 401,
                 code: 3,
                 message: "Some product info is missing",
-                cause: createProductErrorInfo({title, description, code, price, stock, category})
+                cause: createProductErrorInfo({titulo, descripcion, code, precio, stock})
             })
         }
 
-        const product = await productDao.createProduct({ title, description, code, price, stock, category, thumbnails, owner });
+        const product = await productDao.createProduct({ titulo, descripcion, code, precio, stock, img, owner });
         
         customLogger.info(`Product Added: ${product}`);
 

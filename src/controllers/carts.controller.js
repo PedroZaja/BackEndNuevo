@@ -13,7 +13,7 @@ export const getCart = async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        res.status(400).json({error: "Error searching the cart. "+error.message});
+        res.status(400).json({error: "Error buscando el carrito. "+error.message});
     }
     
 }
@@ -26,7 +26,7 @@ export const createCart = async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        res.status(400).json({error: "Error creating the cart. "+error.message});
+        res.status(400).json({error: "Error creando el carrito. "+error.message});
     }
     
 }
@@ -41,10 +41,10 @@ export const updateProductQuantityToCart = async (req, res, next) => {
         const productToAdd = await productService.getProductById(productId)
 
         if (!productToAdd) {
-            return res.status(401).json({ status: "error", message: "The product doesn't exist" });
+            return res.status(401).json({ status: "error", message: "El producto no existe" });
         }
         if (productToAdd.owner === req.user.email) {
-            throw new Error('You cant add your products to your own cart');
+            throw new Error('No puedes agregar tu propio producto');
         }
 
         const cart = await cartService.updateQuantity(cartId, productId, quantity);
@@ -67,7 +67,7 @@ export const deleteProductFromCart = async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        res.status(400).json({error: "Error deleting the product in the cart. "+error.message});
+        res.status(400).json({error: "Error eliminando el producto. "+error.message});
     }
 }
 
@@ -82,7 +82,7 @@ export const emptyCart = async (req, res) => {
     } catch (error) {
         
         console.error(error);
-        res.status(400).json({error: "Error emptying the cart. "+error.message});
+        res.status(400).json({error: "Error vaciando el carrito. "+error.message});
     }
     
 }
@@ -90,13 +90,13 @@ export const emptyCart = async (req, res) => {
 export const purchaseCart = async (req, res) => {
     try{
 
-        req.logger.info(`User: ${req.user} wants to finalize his purchase`);
+        req.logger.info(`User: ${req.user} quieres finalizar la compra?`);
         const cartId = req.params.cid;
 
         const cart = await cartService.purchaseCart(cartId, req.user);
         res.status(200).json(cart);
 
     } catch (error) {
-        res.status(400).json({error: "Can't complete purchase "+error.message})
+        res.status(400).json({error: "Se produjo un error al finalizar la compra "+error.message})
     }        
 }

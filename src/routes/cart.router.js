@@ -3,14 +3,13 @@ import { getCart, createCart, updateProductQuantityToCart, deleteProductFromCart
 
 const router = Router();
 
-// Middleware de desarrollo para simular req.user, luego se saca
 const simulateUserMiddleware = (req, res, next) => {
-    // Simular el objeto req.user según tus necesidades
+    
     req.user = {
         first_name: 'Pedro',
         last_name: 'Zaja',
         email: 'pedrodavid21@gmail.com',
-        age: 50,
+        age: 25,
         role: 'premium',
         cart: "648813092e1f7c47f5418791"
     };
@@ -25,6 +24,5 @@ router.delete('/:cid/products/:pid', deleteProductFromCart);
 router.delete('/:cid', emptyCart);
 router.get('/:cid/purchase', simulateUserMiddleware, purchaseCart);
 
-// router.put('/:cid/products/:pid', updateProductQuantityToCart);
 
 export default router;
