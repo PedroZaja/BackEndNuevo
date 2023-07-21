@@ -15,15 +15,14 @@ export default class ProductDao {
     async createProduct(newproduct) {
         return await productsModel.create(newproduct);
     }
-
+    
+    async updateProduct(productId, productToReplace) {
+        req.logger.info(`Product to be updated: ${productId}`);
+        
+        return await productsModel.findByIdAndUpdate(productId, productToReplace, {new: true});
+    }
+    
     async deleteProduct(productId) {
         return await productsModel.deleteOne({ _id: productId });
-    }
-
-    async updateProduct(productId, productToReplace) {
-        console.log("Product to be updated: ");
-        console.log(productId);
-
-        return await productsModel.findByIdAndUpdate(productId, productToReplace, {new: true});
     }
 }
