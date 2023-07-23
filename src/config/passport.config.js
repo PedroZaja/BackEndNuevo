@@ -4,11 +4,11 @@ import passportLocal from 'passport-local'
 import GitHubStrategy from 'passport-github2';
 import { createHash, isValidPassword } from '../util.js'
 import config from './config.js';
-import UserManager from '../dao/db/user.dao.js';
+import UserService from "../services/users.service.js";
 import CartsService from '../services/carts.service.js';
 import UserDTO from '../dao/DTO/user.dto.js';
 
-const userManager = new UserManager();
+const userService = new UserService();
 const cartsService = new CartsService();
 
 const LocalStrategy = passportLocal.Strategy;
@@ -25,15 +25,15 @@ const initializePassport = () => {
             console.log(password);
 
             const { first_name, last_name, age } = req.body;
-            req.logger.info(`Registrando usuario:  ${JSON.stringify(req.body)}`);
+            req.logger.info(`Registering user:  ${JSON.stringify(req.body)}`);
 
             try {
 
-                const userExists = await userManager.findOne(username);
+                const userExists = await userService.findOne(username);
 
                 if (userExists) {
-                    req.logger.warn(`El usuario ya existe: ${username}`);
-                    return done(null, false, { messages: 'Usuario esistente!' });
+                    req.logger.warn(`User already exist. username: ${username}`);
+                    return done(null, false, { messages: 'User already exist.' });
                 }
 
                 const user = new UserDTO({
@@ -48,12 +48,12 @@ const initializePassport = () => {
                     user.role = 'admin';
                 }
 
-                const result = await userManager.createUser(user);
+                const result = await userService.createUser(user);
 
-                return done(null, result, { messages: `Usuario creado, ID: ${result.id}` });
+                return done(null, result, { messages: `User created successfully, ID: ${result.id}` });
 
             } catch (error) {
-                return done("Error obteniendo el usuario: " + error)
+                return done("Error getting user: " + error)
             }
         }
     ))
@@ -63,27 +63,28 @@ const initializePassport = () => {
 
             try {
 
-                const user = await userManager.findOne(username);
+                const user = await userService.findOne(username);
 
                 if (!user) {
-                    req.logger.warn(`El usuario no existe: ${username}`);
-                    return done(null, false, { messages: "Informacion erronea!" });
+                    req.logger.warn(`User doesn't exists with username: ${username}`);
+                    return done(null, false, { messages: "Invalid credentials." });
                 }
 
                 if (!isValidPassword(user, password)) {
-                    req.logger.warn(`Credenciales erroneas: ${username}`);
-                    return done(null, false, { messages: "Informacion no valida!" });
+                    req.logger.warn(`Invalid credentials for user: ${username}`);
+                    return done(null, false, { messages: "Invalid credentials." });
                 }
 
                 if (!user.cart) {
-                    req.logger.info(`Creando carrito para el usuario: ${username}`);
+                    req.logger.info(`Creating Cart for  user: ${username}`);
                     const cart = await cartsService.createCart();
 
                     user.cart = cart._id;
                     await user.save();
                 }
 
-                return done(null, user, { messages: "Inicio exitoso." });
+
+                return done(null, user, { messages: "Login Success." });
 
             } catch (error) {
                 return done(error);
@@ -126,7 +127,7 @@ const initializePassport = () => {
             req.logger.info(`Profile obtained from user: ${profile}`);
 
             try {
-                const user = await userManager.findOne({
+                const user = await userService.findOne({
                     email: profile._json.email
                 });
 
@@ -144,7 +145,7 @@ const initializePassport = () => {
                         loggedBy: "GitHub"
                     };
 
-                    const result = await userManager.createUser(newUser);
+                    const result = await userService.createUser(newUser);
                     return done(null, result);
 
                 } else {
@@ -163,7 +164,7 @@ const initializePassport = () => {
 
     passport.deserializeUser(async (id, done) => {
         try {
-            let user = await userManager.findById(id);
+            let user = await userService.findById(id);
             done(null, user);
 
         } catch (error) {
@@ -172,14 +173,13 @@ const initializePassport = () => {
     });
 }
 
-
 const cookieExtractor = req => {
     let token = null;
 
     if (req && req.cookies) {
 
         req.logger.info(`Token from Cookie: ${JSON.stringify(req.cookies)}`);
-        token = req.cookies['jwtCookieToken']; 
+        token = req.cookies['jwtCookieToken'];
     }
     return token;
 };

@@ -3,7 +3,16 @@ export default class TicketsRepository{
         this.dao = dao;
     }
 
-    createTicket(data){
-        return this.dao.create(data);
+    async createTicket(data){
+        return await this.dao.createTicket(data);
     }
+
+    async getTickets(){
+        return await this.dao.getTickets();
+    }
+
+    async getTicketById(tid){
+        return await this.dao.getTicketById(tid);
+    }
+
 }

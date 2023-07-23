@@ -3,31 +3,35 @@ export default class CartsRepository{
         this.dao = dao;
     }
 
-    createCart(){
-        return this.dao.create({});
+    async createCart(){
+        return await this.dao.createCart({});
     }
 
-    getByID(id){
-        return this.dao.getByID(id);
+    async getCart(cartId){
+        return await this.dao.getCart(cartId);
     }
 
-    findProduct(cid, pid){
-        return this.dao.findProduct({cid, pid});
+    async findProduct(cartId, productId){
+        return await this.dao.findProduct(cartId, productId);
     }
 
-    addProduct(cid, pid, qty){
-        return cartModel.findOneAndUpdate({cid, pid, qty});
+    async addProduct(cartId, productId, quantity){
+        return await this.dao.addProduct(cartId, productId, quantity);
     }
 
-    addQuantity(cid, pid, qty){
-        return cartModel.addQuantity({cid, pid, qty});
+    async updateQuantity(cartId, productId, quantity){
+        return await this.dao.updateQuantity(cartId, productId, quantity);
     }
 
-    deleteProduct(cid, pid){
-        return cartModel.deleteProduct({cid, pid})
+    async deleteProduct(cartId, productId){
+        return await this.dao.deleteProduct(cartId, productId)
     }
 
-    deleteAllProducts(cid){
-        return cartModel.deleteAllProducts(cid);
+    async emptyCart(cartId){
+        return await this.dao.emptyCart(cartId);
+    }
+
+    async getPaginatedCart(cartId){
+        return await this.dao.getPaginatedCart(cartId);
     }
 }

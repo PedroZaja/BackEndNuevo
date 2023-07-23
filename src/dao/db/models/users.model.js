@@ -7,10 +7,14 @@ const userSchema = new mongoose.Schema({
     last_name: String,
     email: {
         type: String,
-        unique: true
+        unique: true,
+        require: true
     },
     age: Number,
-    password: String,
+    password: {
+        type: String,
+        require: true
+    },
     role: {
         type: String,
         default: 'user',
@@ -27,7 +31,19 @@ const userSchema = new mongoose.Schema({
                 ref: "tickets"       
             }   
         ]
-    }
+    },
+    documents: {
+        type: [
+            {
+                name: {
+                    type: String,
+                    unique: true
+                },
+                reference: String
+            }
+        ]
+    },
+    last_connection: String
 })
 
 userSchema.pre(/^find/, function (next) {
@@ -35,4 +51,4 @@ userSchema.pre(/^find/, function (next) {
     next();
 });
 
-export const userModel = mongoose.model(collection, userSchema);
+export const usersModel = mongoose.model(collection, userSchema);

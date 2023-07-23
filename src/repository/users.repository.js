@@ -1,13 +1,31 @@
 export default class UserRepository{
+
     constructor(dao){
         this.dao = dao;
     }
 
-    createUser({first_name, last_name, email, age, password}){
-        return this.dao.create({first_name: first_name, last_name: last_name, email: email, age: age, password: password});
+    async createUser(user) {
+
+        return await this.dao.createUser(user);
+    };
+
+    async getAll() {
+
+        return await this.dao.getAll();
+    };
+
+    async findOne(email) {
+
+        return await this.dao.findOne(email);
+    };
+
+    async updateUser(userId, userToReplace) {
+
+        return await this.dao.updateUser(userId, userToReplace);
     }
 
-    findByEmail(email){
-        return this.dao.find(email);
-    }
+    async findById(id) {
+
+        return await this.dao.findById(id);
+    };
 }

@@ -1,33 +1,20 @@
-import { userModel } from "./models/user.model.js";
+import { ticketModel } from "./models/tickets.model.js";
 
-export default class UserManager {
+export default class TicketDao {
 
-    async createUser(user) {
-
-        const newUser = await userModel.create(user);
-        return newUser;
+    async createTicket(ticket) {
+        const newTicket = await ticketModel.create(ticket);
+        return newTicket;
     };
 
-    async getAll() {
+    async getTickets() {
 
-        const users = await userModel.find();
-        return users.map(user => user.toObject());
+        const tickets = await ticketModel.find();
+        return tickets;
     };
 
-    async findOne(email) {
-
-        const result = await userModel.findOne({email});
-        return result;
+    async getTicketById(tid) {
+        return await ticketModel.findById(tid);
     };
 
-    async updateUser(userId, userToReplace) {
-        const result = await userModel.updateOne(userId, userToReplace);
-        return result;
-    }
-
-    async findById(id) {
-
-        const result = await userModel.findById({_id: id});
-        return result;
-    };
 }

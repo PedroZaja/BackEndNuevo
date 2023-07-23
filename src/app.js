@@ -6,11 +6,9 @@ import __dirname from './util.js';
 import path from 'path';
 import {setupWebSocket} from './websocket.js';
 import config from "./config/config.js";
-
 //Database
 import mongoose from 'mongoose';
 import MongoStore from 'connect-mongo';
-
 // Errors
 import errorHandler from './middlewares/errors/index.js'
 import { addLogger, customLogger } from './config/logger.js';
@@ -18,7 +16,6 @@ import { addLogger, customLogger } from './config/logger.js';
 // Passport
 import passport from 'passport';
 import initializePassport from './config/passport.config.js';
-
 // Swagger Documentation
 import swaggerDoc from "swagger-jsdoc";
 import swaggerUiExpress from "swagger-ui-express";
@@ -31,6 +28,7 @@ import usersViewsRouter from './routes/user.views.router.js';
 import sessionsRouter from './routes/session.router.js';
 import githubLoginRouter from './routes/github-login.views.router.js';
 import ticketsRouter from './routes/tickets.router.js'
+import usersRouter from './routes/users.router.js'
 import emailRouter from './routes/email.router.js';
 import mockingRouter from './routes/mock.router.js';
 import logRouter from './routes/log.router.js';
@@ -41,8 +39,8 @@ const swaggerOpts = {
     definition: {
         openapi: "3.0.1",
         info: {
-            title: "Proyecto Back End!",
-            description: "Api docs",
+            title: "Documentacion de mi proyecto!",
+            description: "Api docs with swagger",
             version: "1.0.0"
         }
     },
@@ -54,8 +52,11 @@ app.use('/apidocs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
+
 app.use(addLogger);
+
 app.use(express.static(path.join(__dirname +'/public')));
+
 app.engine('handlebars', handlebars.engine());
 app.set('view engine', 'handlebars');
 app.set('views', __dirname + "/views");
@@ -83,6 +84,7 @@ app.use("/api/products", productsRouter);
 app.use("/api/carts", cartRouter);
 app.use("/api/sessions", sessionsRouter);
 app.use('/api/tickets', ticketsRouter);
+app.use('/api/users', usersRouter);
 app.use("/users", usersViewsRouter);
 app.use("/github", githubLoginRouter);
 app.use("/api/mail", emailRouter);
@@ -93,7 +95,7 @@ app.use('/loggerTest', logRouter)
 app.use(errorHandler);
 
 const httpServer = app.listen(config.port, () => {
-    customLogger.http(`Servidor Express escuchando en el puerto: ${config.port}`);
+    customLogger.http(`Servidor escuchando en el puerto: ${config.port}`);
 })
 
 setupWebSocket(httpServer);
@@ -101,12 +103,10 @@ setupWebSocket(httpServer);
 const connectMongoDB = async () => {
     try {
         await mongoose.connect(config.mongoUrl);
-        customLogger.info("Conexion a la base de datos establecida!");
+        customLogger.info("Conexion a la base de datos exitosa!");
     } catch (error) {
-        customLogger.fatal(`Error al conectar a la base de datos. ${error}`);
+        customLogger.fatal(`Error conectandose a la base de datos. ${error}`);
     }
 
 }
 connectMongoDB();
-
-

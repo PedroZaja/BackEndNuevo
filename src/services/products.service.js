@@ -1,7 +1,6 @@
 import { customLogger } from "../config/logger.js";
-// import ProductDao from "../dao/db/products.dao.js";
-import { ProductService } from "../repository/index.repository.js";
-import CustomError from "../middlewares/errors/CustomError.js"
+import { ProductRepositoryWithDao } from "../repository/index.repository.js";
+import CustomError from "../middlewares/errors/CustomError.js";
 import { updateQuantityInCartErrorInfo, createProductErrorInfo } from "../middlewares/errors/messages/error.messages.js";
 
 
@@ -16,7 +15,7 @@ export default class ProductsService {
         const sort = parameters.sort ? (parameters.sort === "asc" ? 1 : parameters.sort === "desc" ? -1 : null) : null;
 
         const filters = {};
-        const options = {};
+        const options = {}; 
 
         if (category || status !== undefined) {
             if (category) {
@@ -34,7 +33,7 @@ export default class ProductsService {
             options.sort = { price: sort };
         }
 
-        const products = await ProductService.getProducts(filters, options);
+        const products = await ProductRepositoryWithDao.getProducts(filters, options);
 
         return products;
     }
@@ -42,7 +41,7 @@ export default class ProductsService {
     async getProductById(id) {
         if (!id) throw new Error('Product ID is required.');
 
-        const product = await ProductService.getProductById(id)
+        const product = await ProductRepositoryWithDao.getProductById(id)
         return product;
     }
 
@@ -59,7 +58,7 @@ export default class ProductsService {
             })
         }
 
-        const product = await ProductService.createProduct({ title, description, code, price, stock, category, thumbnails, owner });
+        const product = await ProductRepositoryWithDao.createProduct({ title, description, code, price, stock, category, thumbnails, owner });
         
         customLogger.info(`Product Added: ${product}`);
 
@@ -70,14 +69,14 @@ export default class ProductsService {
 
         if (!productId) throw new Error('Product ID is required.');
 
-        const product = await ProductService.updateProduct(productId, productFields);
+        const product = await ProductRepositoryWithDao.updateProduct(productId, productFields);
         return product;
     }
 
     async deleteProduct(id) {
         if (!id) throw new Error('Product ID is required.');
 
-        const product = await ProductService.deleteProduct(id);
+        const product = await ProductRepositoryWithDao.deleteProduct(id);
 
         return product;
     }

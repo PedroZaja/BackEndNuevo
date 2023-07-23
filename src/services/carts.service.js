@@ -1,11 +1,10 @@
-import CartDao from "../dao/db/carts.dao.js";
 import ProductsService from "./products.service.js";
 import TicketService from "./tickets.service.js";
+import { CartsRepositoryWithDao } from "../repository/index.repository.js";
 import CustomError from "../middlewares/errors/CustomError.js"
 import { updateQuantityInCartErrorInfo, generateErrorInfo } from "../middlewares/errors/messages/error.messages.js";
 import { customLogger } from "../config/logger.js";
 
-const cartsDao = new CartDao();
 const productService = new ProductsService();
 const ticketService = new TicketService();
 
@@ -14,12 +13,12 @@ export default class CartsService {
     async getCart(id) {
         if (!id) throw new Error('Product ID is required.');
 
-        const cart = await cartsDao.getCart(id);
+        const cart = await CartsRepositoryWithDao.getCart(id);
         return cart;
     }
 
     async createCart() {
-        const cart = await cartsDao.createCart();
+        const cart = await CartsRepositoryWithDao.createCart();
         return cart;
     }
 
@@ -39,17 +38,17 @@ export default class CartsService {
             throw new Error('Quantity must be a positive number.');
         }
 
-        const productInCart = await cartsDao.findProduct(cartId, productId);
+        const productInCart = await CartsRepositoryWithDao.findProduct(cartId, productId);
         customLogger.debug(`Product to update in cart ${productInCart}`);
 
         if (!productInCart) {
 
-            const updatedCart = await cartsDao.addProduct(cartId, productId, quantity);
+            const updatedCart = await CartsRepositoryWithDao.addProduct(cartId, productId, quantity);
             return updatedCart;
             
         } else {
 
-            const updatedCart = await cartsDao.updateQuantity(cartId, productId, quantity);
+            const updatedCart = await CartsRepositoryWithDao.updateQuantity(cartId, productId, quantity);
             return updatedCart;
         }
     }
@@ -59,14 +58,14 @@ export default class CartsService {
         if (!cartId) throw new Error('Cart ID is required.');
         if (!productId) throw new Error('Product ID is required.');
 
-        const cart = await cartsDao.deleteProduct(cartId, productId);
+        const cart = await CartsRepositoryWithDao.deleteProduct(cartId, productId);
         return cart;
     }
 
     async emptyCart(cartId) {
         if (!cartId) throw new Error('Cart ID is required.');
 
-        const cart = await cartsDao.emptyCart(cartId);
+        const cart = await CartsRepositoryWithDao.emptyCart(cartId);
         return cart;
     }
 
@@ -77,7 +76,7 @@ export default class CartsService {
 
         const purchaser = user.email;
 
-        let cart = await cartsDao.getCart(cartId);
+        let cart = await CartsRepositoryWithDao.getCart(cartId);
         if (!cart.products.length) throw new Error('Cart is empty')
 
         const notProcessed = []
@@ -90,7 +89,7 @@ export default class CartsService {
 
                 total += item.quantity * item.productId.price;
 
-                await cartsDao.deleteProduct(cartId, item.productId._id);
+                await CartsRepositoryWithDao.deleteProduct(cartId, item.productId._id);
 
             } else {
 
@@ -111,7 +110,7 @@ export default class CartsService {
     async getPaginatedCart(cartId) {
         if (!cartId) throw new Error('Cart ID is required.');
 
-        const cart = await cartsDao.getPaginatedCart(cartId);
+        const cart = await CartsRepositoryWithDao.getPaginatedCart(cartId);
         return cart;
     }
 }

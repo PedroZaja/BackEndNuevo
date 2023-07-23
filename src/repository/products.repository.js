@@ -3,23 +3,23 @@ export default class ProductsRepository{
         this.dao = dao;
     }
 
-    getProducts(filters, options){
-        return this.dao.getProducts(filters, options);
+    async getProducts(filters, options){
+        return await this.dao.getProducts(filters, options);
     }
 
     async getProductById(productId){
-        return this.dao.getProductById(productId);
+        return await this.dao.getProductById(productId);
     }
 
-    createProduct(newproduct){
-        return this.dao.createProduct(newproduct);
+    async createProduct(newproduct){
+        return await this.dao.createProduct(newproduct);
     }
 
-    updateProduct(productId, productToReplace){
-        return this.dao.updateProduct(productId, productToReplace);
+    async updateProduct(productId, productToReplace){
+        return await this.dao.updateProduct(productId, productToReplace);
     }
 
-    deleteProduct(productId){
-        return this.dao.deleteProduct(productId);
+    async deleteProduct(productId){
+        return await this.dao.deleteProduct(productId);
     }
 }

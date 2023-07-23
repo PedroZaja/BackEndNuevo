@@ -1,13 +1,13 @@
 import TicketService from "../services/tickets.service.js";
-import UserManager from "../dao/db/user.dao.js";
+import UserService from "../services/users.service.js";
 import config from "../config/config.js";
 
 const ticketService = new TicketService();
-const userService = new UserManager();
+const userService = new UserService();
 
 export const getTickets = async (req, res) => {
     try {
-        const tickets = await ticketService.getAll();
+        const tickets = await ticketService.getTickets();
         res.status(200).json(tickets);
     }
     catch (error) {
@@ -29,6 +29,7 @@ export const getTicketById = async (req, res) => {
 }
 export const createTicket = async (req, res) => {
     try {
+
 
     } catch (error) {
         console.error(error);
