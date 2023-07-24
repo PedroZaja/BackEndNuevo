@@ -32,18 +32,18 @@ const userSchema = new mongoose.Schema({
             }   
         ]
     },
-    documents: {
-        type: [
-            {
-                name: {
-                    type: String,
-                    unique: true
-                },
-                reference: String
-            }
-        ]
-    },
-    last_connection: String
+    documents: [{
+        name: {
+            type: String,
+            unique: true
+        },
+        reference: String,
+        status: {
+            type: String,
+            default: "Pending"
+        }
+    }],
+    last_connection: Date
 })
 
 userSchema.pre(/^find/, function (next) {

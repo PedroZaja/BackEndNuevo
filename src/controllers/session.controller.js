@@ -16,8 +16,8 @@ export const register = async (req, res) => {
             redirectUrl: '/users/login'
         });
     } catch (error) {
-        req.logger.console.warn(`Register user error:  ${error}`);
-        res.status(500).json({ error: error.message, message: 'Error registering user' });
+        req.logger.console.warn(`Error registrando el usuario:  ${error}`);
+        res.status(500).json({ error: error.message, message: 'Error registrando el usuario' });
     }
 };
 
@@ -44,7 +44,7 @@ export const login = async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: error, message: "Error login user." });
+        res.status(500).json({ error: error, message: "Error de inicio." });
     }
 };
 
@@ -68,10 +68,10 @@ export const recoverPass = async (req, res) => {
 
         const { email } = req.body;
         const user = await userService.findOne(email);
-        req.logger.info(`Creating a restore pass token for: ${email}`);
+        req.logger.info(`Creando un token de recuperacion: ${email}`);
 
         if (!user) {
-            return res.status(401).json({ status: 'error', error: "Can't find user." });
+            return res.status(401).json({ status: 'error', error: "No se encuentra el usuario." });
         }
 
         let restorePassToken = generateJwtToken(email, '1h')
@@ -83,16 +83,16 @@ export const recoverPass = async (req, res) => {
             subject: 'Restaurar contraseña!',
             html: `
             <div style="display: flex; flex-direction: column; justify-content: center;  align-items: center;">
-            <h1>Para restaurar contrasea, click <a href="http://localhost:8080/users/recoverLanding/${restorePassToken}">aqui</a></h1>
+            <h1>Para restaurar contraseña, click <a href="http://localhost:8080/users/recoverLanding/${restorePassToken}">aqui!</a></h1>
             </div>`
         });
 
-        req.logger.info(`Password reset token was sent`);
-        res.status(200).json({ status: "success", message: `Password reset token was sent` })
+        req.logger.info(`Token de restauracion enviado!`);
+        res.status(200).json({ status: "success", message: `Token de restauracion enviado` })
 
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: error, message: 'Password could not be restored' });
+        res.status(500).json({ error: error, message: 'La contraseña no se puede cambiar' });
     }
 }
 
@@ -104,26 +104,26 @@ export const restorePass = async (req, res, next) => {
         const decodedToken = jwt.verify(token, config.jwtPrivateKey);
 
         if (!newPassword || newPassword.trim() === "") {
-            return res.send({ status: "error", message: "The password cannot be empty" });
+            return res.send({ status: "error", message: "La contraseña no puede estar vacia!" });
         }
 
         const email = decodedToken.user;
         const user = await userService.findOne(email);
-        req.logger.info(`Check if user exist for: ${email}`);
+        req.logger.info(`Comprobando que el usuario exista: ${email}`);
 
 
         if (!user) {
-            return res.status(401).json({ status: 'error', error: "Can't find user." });
+            return res.status(401).json({ status: 'error', error: "Usuario no encontrado." });
         }
 
         if (isValidPassword(user, newPassword)) {
-            return res.send({ status: "error", message: "The password cannot be the same" });
+            return res.send({ status: "error", message: "La contraseña no puede ser la misma" });
         }
 
         const hashedPass = createHash(newPassword)
         const result = await userService.updateUser({ email: email }, { password: hashedPass });
 
-        return res.status(200).json({ status: "success", message: "The password was changed successfully." });
+        return res.status(200).json({ status: "success", message: "La contraseña se cambio con exito!." });
 
     } catch (error) {
 
@@ -158,32 +158,3 @@ export const gitHubCallback = async (req, res) => {
 
     res.redirect("/github");
 };
-
-
-export const swapUserClass = async (req, res, next) => {
-    try {
-
-        const email = req.params.uid;
-
-        let dbUser = await userService.findOne(email);
-        req.logger.debug(`Get user data from: ${email}`);
-
-        if (dbUser.role === "admin") {
-            return res.status(403).json({ status: "error", message: "Admin users cant swap roles" });
-
-        } else if (dbUser.role === "user") {
-            dbUser.role = "premium";
-            const changedRole = await userService.updateUser(email, dbUser);
-            return res.status(200).json({ status: "success", message: `The Role was changed successfully to ${dbUser.role}.`});
-
-        } else if (dbUser.role === "premium") {
-            dbUser.role = "user";
-            const changedRole = await userService.updateUser(email, dbUser);
-            return res.status(200).json({ status: "success", message: `The Role was changed successfully to ${dbUser.role}.`});
-
-        }
-        
-    } catch (error) {
-        next(error)
-    }
-}

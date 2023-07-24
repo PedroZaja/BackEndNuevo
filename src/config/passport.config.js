@@ -25,15 +25,15 @@ const initializePassport = () => {
             console.log(password);
 
             const { first_name, last_name, age } = req.body;
-            req.logger.info(`Registering user:  ${JSON.stringify(req.body)}`);
+            req.logger.info(`Registrando usuario:  ${JSON.stringify(req.body)}`);
 
             try {
 
                 const userExists = await userService.findOne(username);
 
                 if (userExists) {
-                    req.logger.warn(`User already exist. username: ${username}`);
-                    return done(null, false, { messages: 'User already exist.' });
+                    req.logger.warn(`El usuario ya existe:  ${username}`);
+                    return done(null, false, { messages: 'Usuario existente' });
                 }
 
                 const user = new UserDTO({
@@ -50,10 +50,10 @@ const initializePassport = () => {
 
                 const result = await userService.createUser(user);
 
-                return done(null, result, { messages: `User created successfully, ID: ${result.id}` });
+                return done(null, result, { messages: `Usuario creado, ID: ${result.id}` });
 
             } catch (error) {
-                return done("Error getting user: " + error)
+                return done("Error obteniendo el usuario: " + error)
             }
         }
     ))
@@ -66,17 +66,17 @@ const initializePassport = () => {
                 const user = await userService.findOne(username);
 
                 if (!user) {
-                    req.logger.warn(`User doesn't exists with username: ${username}`);
-                    return done(null, false, { messages: "Invalid credentials." });
+                    req.logger.warn(`El usuario no existe con el nombre: ${username}`);
+                    return done(null, false, { messages: "Datos inexistentes" });
                 }
 
                 if (!isValidPassword(user, password)) {
-                    req.logger.warn(`Invalid credentials for user: ${username}`);
-                    return done(null, false, { messages: "Invalid credentials." });
+                    req.logger.warn(`Datos erroneos: ${username}`);
+                    return done(null, false, { messages: "Datos invalidos" });
                 }
 
                 if (!user.cart) {
-                    req.logger.info(`Creating Cart for  user: ${username}`);
+                    req.logger.info(`Creando carrito por el usuario: ${username}`);
                     const cart = await cartsService.createCart();
 
                     user.cart = cart._id;
@@ -84,7 +84,7 @@ const initializePassport = () => {
                 }
 
 
-                return done(null, user, { messages: "Login Success." });
+                return done(null, user, { messages: "Inicio exitoso." });
 
             } catch (error) {
                 return done(error);
@@ -124,17 +124,17 @@ const initializePassport = () => {
             scope: ['user:email']
         },
         async (accessToken, refreshToken, profile, done) => {
-            req.logger.info(`Profile obtained from user: ${profile}`);
+            req.logger.info(`Perfil obtenido: ${profile}`);
 
             try {
                 const user = await userService.findOne({
                     email: profile._json.email
                 });
 
-                req.logger.info(`User finded for login: ${user}`);
+                req.logger.info(`Usuario encontrado: ${user}`);
 
                 if (!user) {
-                    req.logger.warn(`User doesn't exists with username: ${profile._json.email}`);
+                    req.logger.warn(`El usuario no existe: ${profile._json.email}`);
 
                     let newUser = {
                         first_name: profile._json.name,
@@ -168,7 +168,7 @@ const initializePassport = () => {
             done(null, user);
 
         } catch (error) {
-            console.error("Error deserializing the user: " + error);
+            console.error("Error obteniendo el usuario: " + error);
         }
     });
 }
