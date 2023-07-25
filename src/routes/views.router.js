@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { passportCall } from "../util.js";
 import RoleMiddleware from "../middlewares/role/role.middleware.js";
-import { get, getChat, getProducts, getPaginatedCart, getRealTimeProducts, createRealTimeProduct, updateRealTimeProduct, deleteRealTimeProduct } from "../controllers/views.controller.js";
+import { get, getChat, getProducts, getPaginatedCart, getRealTimeProducts, createRealTimeProduct, updateRealTimeProduct, deleteRealTimeProduct, uploads } from "../controllers/views.controller.js";
 
 const router = Router();
 
@@ -13,5 +13,6 @@ router.get('/realtimeproducts', getRealTimeProducts);
 router.post('/realtimeproducts', createRealTimeProduct);
 router.put('/realtimeproducts/:pid', updateRealTimeProduct);
 router.delete('/realtimeproducts/:pid', deleteRealTimeProduct);
+router.get('/uploads', passportCall('jwt'), uploads);
 
 export default router;

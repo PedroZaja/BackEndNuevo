@@ -1,0 +1,60 @@
+<div class="container mt-5 w-50">
+    <h2>Subidas</h2>
+    <br>
+    <div class="mb-3 w-50">
+        <button class="btn btn-primary mb-2" data-bs-target="#modalUploadsRequiredDocuments" data-bs-toggle="modal" href="#modalUploadsRequiredDocuments"> Sube los documentos requeridos</button>
+    </div>
+    <br>
+    <p>{{user.email}}</p>
+    <ul>
+        {{#each uploads}}
+        <div class="accordion m-2" id="accordionPanelsStayOpen{{name}}">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="panelsStayOpen-h{{name}}">
+                    <button class="accordion-button collapsed btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-{{name}}" aria-expanded="true" aria-controls="panelsStayOpen-{{name}}">
+                        <strong>Nombre: {{Nombre}}</strong>
+                    </button>
+                </h2>
+                <div id="panelsStayOpen-{{Nombre}}" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-h{{Nombre}}">
+                    <div class="accordion-body">
+                        <strong>URL: <a href="" class="text-primary">{{Nombre}}</a></strong><br>
+                        Referencia: {{reference}}<br>
+                        Estado: <code>{{status}}</code><br>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/each}}
+    </ul>
+</div>
+
+<div class="modal fade" id="modalUploadsRequiredDocuments" tabindex="-1" aria-labelledby="modalUploadsRequiredDocumentsLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5 text-primary" id="modalUploadsRequiredDocumentsLabel">Subir archivo</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <form action="/api/users/{{user.email}}/documents" method="POST" enctype="multipart/form-data">
+                    <label for="file" class="text-primary">Selecciona un documento:</label>
+                    <input type="file" class="form-control" name="documents">
+                    <br>
+                    <input type="radio" id="reference1" name="reference" value="Identification">
+                    <label for="reference1" class="text-primary">Identificacion</label><br>
+                    <input type="radio" id="reference2" name="reference" value="Proof of address">
+                    <label for="reference2" class="text-primary">Comprobante de domicilio</label><br>
+                    <input type="radio" id="reference3" name="reference" value="Proof of bank account">
+                    <label for="reference3" class="text-primary">Comprobante de pago</label><br>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Subir</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="closeAdd">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>

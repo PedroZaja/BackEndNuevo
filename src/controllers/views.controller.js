@@ -1,17 +1,18 @@
 import { io } from '../websocket.js'
 import ProductsService from "../services/products.service.js";
 import CartsService from "../services/carts.service.js";
+import UserService from '../services/users.service.js';
 
-// Product and Cart manager initalizing
 const productsService = new ProductsService();
 const cartsService = new CartsService();
+const userService = new UserService();
 
 export const get = async (req, res) => {
-        res.redirect("/users/login");
+    res.redirect("/users/login");
 };
 
 export const getChat = async (req, res) => {
-        res.render("chat", {});
+    res.render("chat", {});
 };
 
 export const getProducts = async (req, res) => {
@@ -39,7 +40,7 @@ export const getProducts = async (req, res) => {
 
     } catch (error) {
         console.log(error);
-        res.status(500).send({ error: "Error "+error.message });
+        res.status(500).send({ error: "Error " + error.message });
     }
 };
 
@@ -55,12 +56,12 @@ export const getPaginatedCart = async (req, res) => {
 
     } catch (error) {
         console.log(error);
-        res.status(500).send({ error: "Error "+error.message });
+        res.status(500).send({ error: "Error " + error.message });
     }
 };
 
 export const getRealTimeProducts = async (req, res) => {
-        res.render("realTimeProducts");
+    res.render("realTimeProducts");
 };
 
 
@@ -98,7 +99,7 @@ export const updateRealTimeProduct = async (req, res) => {
 
     } catch (error) {
         console.log(error);
-        res.status(500).send({ error: "Error actualizando los productos."+error.message });
+        res.status(500).send({ error: "Error actualizando los productos." + error.message });
     }
 };
 
@@ -117,6 +118,23 @@ export const deleteRealTimeProduct = async (req, res) => {
 
     } catch (error) {
         console.log(error);
-        res.status(500).send({ error: "Error eliminando los productos."+error.message });
+        res.status(500).send({ error: "Error eliminando los productos." + error.message });
+    }
+};
+
+export const uploads = async (req, res) => {
+
+        let user = await userService.findOne(req.user.email);
+        console.log(user);
+
+    let isAdmin = (user.role === 'admin') ? true : false;
+    let isPremium = (user.role === 'premium') ? true : false;
+    let isUser = (user.role === 'user') ? true : false;
+    try {
+        let uploads = user.documents;
+        res.render('uploads', { uploads, user, isAdmin, isPremium, isUser });
+    } catch (err) {
+        let uploads = [];
+        res.render('uploads', { uploads, user, isAdmin, isPremium, isUser });
     }
 };
