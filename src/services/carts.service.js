@@ -3,7 +3,7 @@ import TicketService from "./tickets.service.js";
 import { CartsRepositoryWithDao } from "../repository/index.repository.js";
 import CustomError from "../middlewares/errors/CustomError.js"
 import { updateQuantityInCartErrorInfo, generateErrorInfo } from "../middlewares/errors/messages/error.messages.js";
-import { customLogger } from "../config/logger.js";
+import Logger from '../config/logger.js'
 
 const productService = new ProductsService();
 const ticketService = new TicketService();

@@ -1,4 +1,4 @@
-import { customLogger } from "../config/logger.js";
+import Logger from '../config/logger.js'
 import { ProductRepositoryWithDao } from "../repository/index.repository.js";
 import CustomError from "../middlewares/errors/CustomError.js";
 import { updateQuantityInCartErrorInfo, createProductErrorInfo } from "../middlewares/errors/messages/error.messages.js";

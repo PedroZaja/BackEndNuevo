@@ -1,15 +1,35 @@
-{{#if carts.length}}
-<h1>Carrito:</h1>
-<ul>
-    {{#each carts}}
-    {{#each this.products}}
-    <h5>{{this.productId.titulo}}</h5>
-    <p>{{this.productId.descripcion}}</p>
-    <p>Precio: ${{this.productId.precio}}</p>
-    <p>Cantidad: {{this.quantity}}</p>
-    {{/each}}
-    {{/each}}
-</ul>
-{{else}}
-<p>Aun no tiene productos en el carrito!</p>
-{{/if}}
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Carrito</title>
+    <link rel="stylesheet" href="/css/products.css">
+</head>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <h3 class="text-center py-5 text-primary">Id del carrito: {{cartId}}</h3>
+            {{#if products.length}}
+                {{#each products}}
+                    <div class="col-md-9 mb-4">
+                        <div class="d-flex">
+                            <div class="col-md-4">
+                                <img src="{{this.productId.img}}" class="img-thumbnail" alt="{{this.productId.titulo}}">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="mx-4">
+                                    <h5 class="card-title">{{this.productId.titulo}}</h5>
+                                    <p class="card-text">{{this.productId.descripcion}}</p>
+                                    <p class="card-text">Precio: ${{this.productId.precio}}</p>
+                                    <p class="card-text">Cantidad: {{this.quantity}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {{/each}}
+            {{else}}
+                <p>Aun no hay productos en el carrito!</p>
+            {{/if}}
+        </div>
+    </div>
+</div>

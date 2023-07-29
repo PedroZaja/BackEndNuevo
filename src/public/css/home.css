@@ -9,7 +9,7 @@ body {
     padding: 20px;
 }
 
-.container h1 {
+.container h1, h2, h3 {
     padding: 20px;
 }
 

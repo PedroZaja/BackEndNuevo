@@ -5,7 +5,7 @@ export default class CartDao {
     
     async getCart(cartId) {
 
-        const cart = await cartsModel.findOne({_id: cartId}).populate("products._id");
+        const cart = await cartsModel.findOne({_id: cartId}).populate("products.productId").lean();
         return cart;
     }
 
@@ -15,7 +15,7 @@ export default class CartDao {
     }
     
     async findProduct(cartId, productId) {
-        const cart = await cartsModel.findOne({_id: cartId, "products.product": productId});
+        const cart = await cartsModel.findOne({_id: cartId}).populate("products.productId").lean();
         return cart;
     }
 
@@ -27,13 +27,13 @@ export default class CartDao {
 
     async updateQuantity(cartId, productId, quantity) {
 
-        const updateCartQ = await cartsModel.findOneAndUpdate({_id: cartId, "products.product": productId}, {$inc: {"products.$.quantity": quantity}}, {new: true});
+        const updateCartQ = await cartsModel.findOneAndUpdate({_id: cartId, "products.productId": productId}, {$inc: {"products.$.quantity": quantity}}, {new: true});
         return updateCartQ;
     }
 
     async deleteProduct(cartId, productId) {
 
-        const deletedProduct = await cartsModel.findOneAndUpdate({_id: cartId}, {$pull: {products: {product: productId}}})
+        const deletedProduct = await cartsModel.findOneAndUpdate({_id: cartId}, {$pull: {products: {productId: productId}}})
         return deletedProduct;
     }
 

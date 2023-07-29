@@ -35,7 +35,8 @@ export const getProducts = async (req, res) => {
             products,
             user,
             admin,
-            premium
+            premium,
+            active: {products: true}
         });
 
     } catch (error) {
@@ -51,7 +52,37 @@ export const getPaginatedCart = async (req, res) => {
         res.render("carts", {
             carts: carts.docs,
             currentPage: carts.page,
-            totalPages: carts.totalPages
+            currentPage: carts.page,
+            totalPages: carts.totalPages,
+            active: {carts: true}
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ error: "Error " + error.message });
+    }
+};
+
+export const getCart = async (req, res) => {
+
+    try {
+        let admin, premium = null;
+
+        const user = await userService.findOne(req.user.email)
+        const cart = await cartsService.getCart(user.cart);
+        const products = cart.products;
+        const cartId = user.cart._id;
+
+        admin = (user.role === "admin") ? true : false;
+        premium = (user.role === "premium") ? true : false;
+
+        res.render("carts", {
+            cartId,
+            products,
+            user,
+            admin,
+            premium,
+            active: {cart: true}
         });
 
     } catch (error) {
@@ -124,17 +155,22 @@ export const deleteRealTimeProduct = async (req, res) => {
 
 export const uploads = async (req, res) => {
 
-        let user = await userService.findOne(req.user.email);
-        console.log(user);
+    let user = await userService.findOne(req.user.email);
 
-    let isAdmin = (user.role === 'admin') ? true : false;
-    let isPremium = (user.role === 'premium') ? true : false;
-    let isUser = (user.role === 'user') ? true : false;
-    try {
-        let uploads = user.documents;
-        res.render('uploads', { uploads, user, isAdmin, isPremium, isUser });
-    } catch (err) {
-        let uploads = [];
-        res.render('uploads', { uploads, user, isAdmin, isPremium, isUser });
-    }
+    let admin, premium = null;
+    let uploads = [];
+
+    uploads = user.documents;
+
+    admin = (user.role === "admin") ? true : false;
+    premium = (user.role === "premium") ? true : false;
+
+    res.render("uploads", {
+    uploads,
+    user,
+    admin,
+    premium,
+    active: {uploads: true}
+});
+
 };

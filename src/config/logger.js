@@ -58,29 +58,29 @@ const prodLogger = winston.createLogger({
     ]
 });
 
-const addLogger = (req, res, next) => {
-    if (config.environment === 'production') {
-        req.logger = prodLogger;
-    } else {
-        req.logger = devLogger;
-    }
-    req.logger.info(`${req.method} in ${req.url} - at ${new Date().toLocaleDateString()} - ${new Date().toLocaleTimeString()}`);
-
-    res.on('finish', () => {
-        if (res.statusCode >= 400) {
-            req.logger.warn(`Error ${res.statusCode}: ${res.statusMessage}`);
+class Logger {
+    constructor() {
+        if (config.environment === 'production') {
+            this.logger = prodLogger;
+        } else {
+            this.logger = devLogger;
         }
-    });
+    }
 
-    next();
-};
+    addLogger = (req, res, next) => {
+        req.logger = this.logger;
 
-let customLogger;
+        req.logger.http(`${req.method} in ${req.url} - at ${new Date().toLocaleDateString()} - ${new Date().toLocaleTimeString()}`);
 
-if (config.environment === 'production') {
-    customLogger = prodLogger;
-} else {
-    customLogger = devLogger;
-};
+        res.on('finish', () => {
+            if (res.statusCode >= 400) {
+                req.logger.warn(`Error ${res.statusCode}: ${res.statusMessage}`);
+            }
+        });
 
-export { customLogger, addLogger }
+        next();
+    };
+}
+
+
+export default Logger;
