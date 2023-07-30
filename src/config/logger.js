@@ -69,12 +69,12 @@ class Logger {
 
     addLogger = (req, res, next) => {
         req.logger = this.logger;
-
+        
         req.logger.http(`${req.method} in ${req.url} - at ${new Date().toLocaleDateString()} - ${new Date().toLocaleTimeString()}`);
 
         res.on('finish', () => {
             if (res.statusCode >= 400) {
-                req.logger.warn(`Error ${res.statusCode}: ${res.statusMessage}`);
+                req.logger.warn(`Error ${res.statusCode}: ${res.statusMessage} at ${req.url} `);
             }
         });
 

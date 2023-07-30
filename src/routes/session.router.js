@@ -10,7 +10,7 @@ router.get("/github", passportCall('github', { scope: ['user:email'] }));
 router.get("/githubcallback", passportCall('github', { failureRedirect: '/github/error' }), gitHubCallback);
 
 router.get("/current", passportCall('jwt'), getCurrent)
-router.post("/logout", logout);
+router.post("/logout", passportCall('jwt'), logout);
 router.post("/recover", recoverPass);
 router.post("/restorePass", restorePass);
 

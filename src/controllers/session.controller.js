@@ -55,12 +55,22 @@ export const getCurrent = async (req, res) => {
     res.send(user);
 }
 
+export const logout = async (req, res, next) => {
+    try {
+        if (!req.user) {
+        console.log("Error");
 
-export const logout = async (req, res) => {
-    req.session.destroy();
-    res.clearCookie('jwtCookieToken');
-    req.logger.info('User logout');
-    res.redirect('/users/login');
+    }
+        const user = req. user
+        await userService.changeLastConnection(user.email);
+
+        req.session.destroy();
+        res.clearCookie('jwtCookieToken');
+        req.logger.info('User logout');
+        res.redirect('/users/login');
+    } catch (error) {
+        next(error)
+    }
 }
 
 export const recoverPass = async (req, res) => {

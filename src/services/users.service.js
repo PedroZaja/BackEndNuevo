@@ -118,4 +118,51 @@ export default class UserService {
         }
     };
 
+    async changeLastConnection(userId) {
+        if (!userId) {
+            throw new Error('UserId es requerido.');
+        }
+        try {
+            let user = await UserRepositoryWithDao.findOne(userId);
+
+            if (!user) {
+                throw new Error('Usuario no encontrado.');
+
+            } else {
+                user.last_connection = new Date();
+                const updatedUser = await UserRepositoryWithDao.updateUser(userId, user);
+
+                return updatedUser;
+            }
+        } catch (error) {
+            log.logger.warn(`Error actualizando la ultima last_connection: ${error.message}`);
+            next(error);
+        }
+    };
+
+    async deleteInactiveUsers() {
+        try {
+            const days = config.getInactiveUsersDays;
+            const usersDeleted = await UserRepositoryWithDao.deleteInactiveUsers(days);
+
+            usersDeleted.forEach(async (user) => {
+                const title = "Aviso de eliminacion!"
+                const message = `Hola ${user.first_name}!\n Te informamos que tu cuenta sera eliminada por inactividad.`
+                await emailService.sendEmail(user.email, message, title, (error, result) => {
+                    if (error) {
+                        throw {
+                            error: result.error,
+                            message: result.message
+                        }
+                    }
+                })
+            })
+            return usersDeleted;
+
+        } catch (error) {
+            log.logger.warn(`Error eliminando usuarios inactivos: ${error.message}`);
+            next(error);
+        }
+    };
+
 };

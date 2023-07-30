@@ -28,5 +28,6 @@ export default {
     GHClientSecret: process.env.GHCLIENTSECRET,
     jwtPrivateKey: process.env.JWT_PRIVATE_KEY,
     gmailAccount: process.env.GMAIL_ACCOUNT,
-    gmailAppPassword: process.env.GMAIL_APP_PASSWD
+    gmailAppPassword: process.env.GMAIL_APP_PASSWD,
+    getInactiveUsersDays: process.env.GET_INACTIVE_USERS_DAYS
 };

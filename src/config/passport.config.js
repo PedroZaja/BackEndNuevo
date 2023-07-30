@@ -41,7 +41,8 @@ const initializePassport = () => {
                     last_name: last_name,
                     email: username,
                     age: age,
-                    password: createHash(password)
+                    password: createHash(password),
+                    last_connection: new Date()
                 });
 
                 if (user.email === config.adminName && password === config.adminPassword) {
@@ -142,7 +143,8 @@ const initializePassport = () => {
                         age: '',
                         email: profile._json.email,
                         password: '',
-                        loggedBy: "GitHub"
+                        loggedBy: "GitHub",
+                        last_connection: new Date()
                     };
 
                     const result = await userService.createUser(newUser);

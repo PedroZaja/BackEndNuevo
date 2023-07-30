@@ -6,6 +6,7 @@ export default class UserDTO {
         this.role = user.role,
         this.email = user.email,
         this.password = user.password,
-        this.age = user.age
+        this.age = user.age,
+        this.last_connection = user.last_connection
     }
 }
